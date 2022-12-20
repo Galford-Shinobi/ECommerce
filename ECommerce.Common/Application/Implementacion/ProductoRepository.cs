@@ -126,7 +126,7 @@ namespace ECommerce.Common.Application.Implementacion
                     return new GenericResponse<ProductoDto>
                     {
                         IsSuccess = true,
-                        Message = "Win - your password was changed successfully!",
+                        Message = "Win - your data was changed successfully!",
                         Result = avatar
                     };
                 }
