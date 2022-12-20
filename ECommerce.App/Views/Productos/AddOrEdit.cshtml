@@ -6,3 +6,15 @@
 
 <h1>AddOrEdit</h1>
 
+<div class="container smfont">
+     <form asp-action="AddOrEdit" autocomplete="off" asp-route-id="@Model.Idproducto" onsubmit="return jQueryAjaxPost(this);">
+        <div class="box-body">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Idproducto" />
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="modal"><i class="bi bi-x-octagon"></i> Cancelar</button>
+            <button type="submit" class="btn btn-sm btn-outline-success"><i class="bi bi-save-fill"></i> Guardar</button>
+        </div>
+     </form>
+</div>
