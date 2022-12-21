@@ -26,7 +26,7 @@ namespace ECommerce.Common.Models.Dtos
         [DisplayFormat(DataFormatString = "{0:C2}")]
         [Column(TypeName = "decimal(10,2)")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
-        [Range(1, double.MaxValue, ErrorMessage = "Debes de ingresar un valor mayor a cero en la cantidad.")]
+        [Range(1, double.MaxValue, ErrorMessage = "Debes de ingresar un valor mayor a cero en la Precio.")]
         public decimal? Precio { get; set; } = 0;
         
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
@@ -55,20 +55,20 @@ namespace ECommerce.Common.Models.Dtos
         [Range(1, int.MaxValue, ErrorMessage = "Debes de ingresar un valor mayor a cero en la  {0}.")]
         public int Ivaid { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:D2}")]
+        [DisplayFormat(DataFormatString = "{0:N2}")]
         [Column(TypeName = "decimal(10,2)")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         [Range(1, double.MaxValue, ErrorMessage = "Debes de ingresar un valor mayor a cero en la  {0}.")]
-        public double? Medida { get; set; } = 0;
+        public double Medida { get; set; } = 0;
 
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         [Display(Name = "Piezas")]
-        [DisplayFormat(DataFormatString = "{0:D2}")]
+        [DisplayFormat(DataFormatString = "{0:N2}")]
         [Column(TypeName = "decimal(10,2)")]
         [Range(1, double.MaxValue, ErrorMessage = "Debes de ingresar un valor mayor a cero en la  {0}.")]
         public decimal? Pieza { get; set; } = 0;
 
-        public int? IsActive { get; set; }
+        public int IsActive { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}")]
         [DataType(DataType.DateTime)]
@@ -79,6 +79,8 @@ namespace ECommerce.Common.Models.Dtos
         public virtual ICollection<Iva> Iva { get; set; }
 
         public virtual ICollection<Medidum> MedidaNavigation { get; set; }
+
+        public virtual ICollection<BarraDto> Barras { get; set; }
 
         public IEnumerable<SelectListItem> ComboDepartamentos { get; set; }
         public IEnumerable<SelectListItem> ComboIvas { get; set; }

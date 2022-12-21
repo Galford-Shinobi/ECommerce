@@ -23,15 +23,14 @@ namespace ECommerce.Common.DataBase
         public virtual DbSet<Medidum> Medida { get; set; }
         public virtual DbSet<Producto> Productos { get; set; }
         public virtual DbSet<TipoDocumento> TipoDocumentos { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AspNetRole>(entity =>
             {
                 entity.HasKey(e => e.RolId)
-                    .HasName("PK__AspNetRo__F92302F1E81A5D3A");
+                    .HasName("PK__AspNetRo__F92302F1EC38ACED");
 
-                entity.HasIndex(e => e.Rnombre, "UQ__AspNetRo__67C54CA911058A1B")
+                entity.HasIndex(e => e.Rnombre, "UQ__AspNetRo__67C54CA9104E3E19")
                     .IsUnique();
 
                 entity.Property(e => e.RolId).HasDefaultValueSql("(newid())");
@@ -54,18 +53,18 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<AspNetUser>(entity =>
             {
                 entity.HasKey(e => e.UserId)
-                    .HasName("PK__AspNetUs__1788CC4C01DA5F28");
+                    .HasName("PK__AspNetUs__1788CC4C1F8423BB");
 
-                entity.HasIndex(e => e.NickName, "UQ__AspNetUs__01E67C8B7B4D9906")
+                entity.HasIndex(e => e.NickName, "UQ__AspNetUs__01E67C8BD6B50815")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Email, "UQ__AspNetUs__A9D10534E2536D8E")
+                entity.HasIndex(e => e.Email, "UQ__AspNetUs__A9D10534596BD761")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Dni, "UQ__AspNetUs__C035B8DD6185110C")
+                entity.HasIndex(e => e.Dni, "UQ__AspNetUs__C035B8DD12A6418D")
                     .IsUnique();
 
-                entity.HasIndex(e => e.UserName, "UQ__AspNetUs__C9F28456E018FC22")
+                entity.HasIndex(e => e.UserName, "UQ__AspNetUs__C9F284569098A82D")
                     .IsUnique();
 
                 entity.Property(e => e.UserId).ValueGeneratedNever();
@@ -143,7 +142,7 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<AspNetUserRole>(entity =>
             {
                 entity.HasKey(e => e.UserRolId)
-                    .HasName("PK__AspNetUs__80906A4CF4D80240");
+                    .HasName("PK__AspNetUs__80906A4CF0DD0769");
 
                 entity.HasOne(d => d.Rol)
                     .WithMany(p => p.AspNetUserRoles)
@@ -160,15 +159,21 @@ namespace ECommerce.Common.DataBase
 
             modelBuilder.Entity<Barra>(entity =>
             {
-                entity.HasKey(e => new { e.Idproducto, e.Barcode })
-                    .HasName("PK__Barra__9AAD72B92F78823C");
+                entity.HasKey(e => new { e.BarraId, e.Idproducto })
+                    .HasName("PK__Barra__6FA65B67854875FD");
 
                 entity.ToTable("Barra");
+
+                entity.HasIndex(e => e.Barcode, "UQ__Barra__177800D3E0E3E070")
+                    .IsUnique();
+
+                entity.Property(e => e.BarraId).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.Idproducto).HasColumnName("IDProducto");
 
                 entity.Property(e => e.Barcode)
-                    .HasMaxLength(150)
+                    .IsRequired()
+                    .HasMaxLength(500)
                     .IsUnicode(false);
 
                 entity.HasOne(d => d.IdproductoNavigation)
@@ -182,7 +187,7 @@ namespace ECommerce.Common.DataBase
             {
                 entity.ToTable("Bodega");
 
-                entity.HasIndex(e => e.Descripcion, "UQ__Bodega__92C53B6CF9327B14")
+                entity.HasIndex(e => e.Descripcion, "UQ__Bodega__92C53B6CB960531B")
                     .IsUnique();
 
                 entity.Property(e => e.Descripcion)
@@ -200,7 +205,7 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<BodegaProducto>(entity =>
             {
                 entity.HasKey(e => new { e.Idproducto, e.BodegaId })
-                    .HasName("PK__BodegaPr__E8A0DB1D1F42FDA5");
+                    .HasName("PK__BodegaPr__E8A0DB1DFCF45016");
 
                 entity.ToTable("BodegaProducto");
 
@@ -231,7 +236,7 @@ namespace ECommerce.Common.DataBase
             {
                 entity.ToTable("Concepto");
 
-                entity.HasIndex(e => e.Descripcion, "UQ__Concepto__92C53B6C74973118")
+                entity.HasIndex(e => e.Descripcion, "UQ__Concepto__92C53B6C9A7F70B3")
                     .IsUnique();
 
                 entity.Property(e => e.Descripcion)
@@ -248,7 +253,7 @@ namespace ECommerce.Common.DataBase
             {
                 entity.ToTable("Departamento");
 
-                entity.HasIndex(e => e.Descripcion, "UQ__Departam__92C53B6C17FD0F3E")
+                entity.HasIndex(e => e.Descripcion, "UQ__Departam__92C53B6C3267FCB5")
                     .IsUnique();
 
                 entity.Property(e => e.Descripcion)
@@ -264,11 +269,11 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<Genero>(entity =>
             {
                 entity.HasKey(e => e.GenderId)
-                    .HasName("PK__Genero__4E24E9F77E46FC0A");
+                    .HasName("PK__Genero__4E24E9F749F2F08F");
 
                 entity.ToTable("Genero");
 
-                entity.HasIndex(e => e.GeneroName, "UQ__Genero__8BC59BC02E215C1F")
+                entity.HasIndex(e => e.GeneroName, "UQ__Genero__8BC59BC0D50AEF22")
                     .IsUnique();
 
                 entity.Property(e => e.Description)
@@ -290,7 +295,7 @@ namespace ECommerce.Common.DataBase
             {
                 entity.ToTable("IVA");
 
-                entity.HasIndex(e => e.Descripcion, "UQ__IVA__92C53B6CD47B7F2D")
+                entity.HasIndex(e => e.Descripcion, "UQ__IVA__92C53B6C222B84C0")
                     .IsUnique();
 
                 entity.Property(e => e.Ivaid).HasColumnName("IVAId");
@@ -312,12 +317,12 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<Medidum>(entity =>
             {
                 entity.HasKey(e => e.MedidaId)
-                    .HasName("PK__Medida__5F7A0C02821E425C");
+                    .HasName("PK__Medida__5F7A0C027DF5A235");
 
-                entity.HasIndex(e => e.Descripcion, "UQ__Medida__92C53B6C91ACE236")
+                entity.HasIndex(e => e.Descripcion, "UQ__Medida__92C53B6CF851FD34")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Escala, "UQ__Medida__9B63C44729ABBBAD")
+                entity.HasIndex(e => e.Escala, "UQ__Medida__9B63C44766751796")
                     .IsUnique();
 
                 entity.Property(e => e.Descripcion)
@@ -339,11 +344,9 @@ namespace ECommerce.Common.DataBase
 
             modelBuilder.Entity<Producto>(entity =>
             {
-                entity.HasKey(e => e.Idproducto);
+                entity.HasKey(e => e.IdProducto);
 
                 entity.ToTable("Producto");
-
-                entity.Property(e => e.Idproducto).HasColumnName("IDProducto");
 
                 entity.Property(e => e.Descripcion)
                     .IsRequired()
@@ -395,7 +398,7 @@ namespace ECommerce.Common.DataBase
             {
                 entity.ToTable("TipoDocumento");
 
-                entity.HasIndex(e => e.Descripcion, "UQ__TipoDocu__92C53B6C650AC1CE")
+                entity.HasIndex(e => e.Descripcion, "UQ__TipoDocu__92C53B6C09C94391")
                     .IsUnique();
 
                 entity.Property(e => e.Descripcion)
@@ -407,6 +410,10 @@ namespace ECommerce.Common.DataBase
 
                 entity.Property(e => e.RegistrationDate).HasColumnType("datetime");
             });
+
+           
         }
+
+     
     }
 }

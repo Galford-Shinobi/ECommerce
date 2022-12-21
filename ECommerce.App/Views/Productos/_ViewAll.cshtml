@@ -1,7 +1,7 @@
-﻿@model IEnumerable<ProductoDto>
+﻿@model IEnumerable<VMProducto>
 
-@*@if (Model.Count() > 0)
-{*@
+@if (Model.Count() > 0)
+{
     <table class="table table-striped table-responsive-md table-bordered smfont" id="tbdata" style="width:100%">
         <colgroup>
             <col span="1" />
@@ -18,16 +18,25 @@
                     @Html.DisplayNameFor(model => model.Descripcion)
                 </th>
                 <th>
+                    @Html.DisplayNameFor(model => model.NombreDepartamento)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NombreIva)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Precio)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Pieza)
                 </th>
                 <th>
+                    @Html.DisplayNameFor(model => model.NombreMedida)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.Medida)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.IsActive)
+                    @Html.DisplayNameFor(model => model.EsActivo)
                 </th>
                 <th>
                     <a onclick="showInPopup('@Url.Action("AddOrEdit", "Productos", new { id = 0 }, Context.Request.Scheme)' , 'Nueva Producto')" class="btn btn-sm btn-secondary text-white"><i class="bi bi-plus-square-fill"></i> Producto </a>
@@ -46,29 +55,38 @@
                         @Html.DisplayFor(modelItem => item.Descripcion)
                     </td>
                     <td>
+                        @Html.DisplayFor(modelItem => item.NombreDepartamento)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombreIva)
+                    </td>
+                    <td>
                         @Html.DisplayFor(modelItem => item.Precio)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Pieza)
                     </td>
                     <td>
+                        @Html.DisplayFor(modelItem => item.NombreMedida)
+                    </td>
+                    <td>
                         @Html.DisplayFor(modelItem => item.Medida)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.IsActive)
+                        @Html.DisplayFor(modelItem => item.EsActivo)
                     </td>
                     <td>
-                        <a onclick="showInPopup('@Url.Action("AddOrEdit", "Productos", new { id = item.Idproducto }, Context.Request.Scheme)' , 'Actualizar Producto')" class="btn btn-sm btn-outline-warning"><i class="bi bi-pencil-square"></i> </a>
-                        <button data-id="@item.Idproducto" class="btn btn-sm btn-outline-danger deleteItem" data-bs-toggle="modal" data-bs-target="#deleteDialog"><i class="bi bi-trash"></i></button>
+                        <a onclick="showInPopup('@Url.Action("AddOrEdit", "Productos", new { id = item.IdProducto }, Context.Request.Scheme)' , 'Actualizar Producto')" class="btn btn-sm btn-outline-warning"><i class="bi bi-pencil-square"></i> </a>
+                        <button data-id="@item.IdProducto" class="btn btn-sm btn-outline-danger deleteItem" data-bs-toggle="modal" data-bs-target="#deleteDialog"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 
-    @*}
+}
 else
 {
     <p> No Hay registros de Productos </p>
-    <a onclick="showInPopup('@Url.Action("AddOrEdit", "Producto", new { id = 0 }, Context.Request.Scheme)' , 'Nueva Producto')" class="btn btn-sm btn-secondary text-white"><i class="bi bi-plus-square-fill"></i> Producto </a>
-}*@
+    <a onclick="showInPopup('@Url.Action("AddOrEdit", "Productos", new { id = 0 }, Context.Request.Scheme)' , 'Nueva Producto')" class="btn btn-sm btn-secondary text-white"><i class="bi bi-plus-square-fill"></i> Producto </a>
+}

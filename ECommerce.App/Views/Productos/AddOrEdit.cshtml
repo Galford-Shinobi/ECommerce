@@ -11,6 +11,81 @@
         <div class="box-body">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Idproducto" />
+            <input type="hidden" asp-for="Imagen" />
+            <input type="hidden" asp-for="GuidImagen" />
+            <input type="hidden" asp-for="PathImagen" />
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Nombre" class="control-label"></label>
+                        <input asp-for="Nombre" class="form-control smfont" placeholder="Nombre Producto"/>
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Descripcion" class="control-label"></label>
+                        <textarea asp-for="Descripcion" class="form-control  smfont" placeholder="Descripcion"></textarea>
+                        <span asp-validation-for="Descripcion" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Notas" class="control-label"></label>
+                        <textarea asp-for="Notas" class="form-control  smfont" placeholder="Notas"></textarea>
+                        <span asp-validation-for="Notas" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Barcode" class="control-label"></label>
+                        <input asp-for="Barcode" class="form-control  smfont" placeholder="Codigo de Barra"/>
+                        <span asp-validation-for="Barcode" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ImageFile" class="control-label"></label>
+                        <input asp-for="ImageFile" class="form-control" type="file" accept="image/*"/>
+                        <span asp-validation-for="ImageFile" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Precio" class="control-label"></label>
+                        <input asp-for="Precio" class="form-control smfont" type="number" step="0.01" />
+                        <span asp-validation-for="Precio" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Medida" class="control-label"></label>
+                        <input asp-for="Medida" class="form-control smfont" type="number" />
+                        <span asp-validation-for="Medida" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Pieza" class="control-label"></label>
+                        <input asp-for="Pieza" class="form-control smfont" type="number" />
+                        <span asp-validation-for="Pieza" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="DepartamentoId" class="control-label"></label>
+                        <select asp-for="DepartamentoId" asp-items="Model.ComboDepartamentos" class="form-control smfont"></select>
+                        <span asp-validation-for="DepartamentoId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Ivaid" class="control-label"></label>
+                        <select asp-for="Ivaid" asp-items="Model.ComboIvas" class="form-control smfont"></select>
+                        <span asp-validation-for="Ivaid" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="MedidaId" class="control-label"></label>
+                        <select asp-for="MedidaId" asp-items="Model.ComboMedidas" class="form-control smfont"></select>
+                        <span asp-validation-for="MedidaId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="modal"><i class="bi bi-x-octagon"></i> Cancelar</button>

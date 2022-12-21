@@ -28,6 +28,7 @@ builder.Services.AddFlashMessage();
 //Register dapper in scope    
 builder.Services.AddScoped<IDapperRepository, DapperRepository>();
 builder.Services.AddScoped<ICombosHelper, CombosHelper>();
+builder.Services.AddScoped<IImageHelper, ImageHelper>();
 
 // Set the JSON serializer options
 builder.Services.Configure<JsonOptions>(options =>

@@ -24,7 +24,7 @@ namespace ECommerce.Common.Application.Implementacion
             try
             {
                 var OnlyProd = await _dbContext
-                    .Productos.FirstOrDefaultAsync(c => c.Idproducto == avatar.Idproducto);
+                    .Productos.FirstOrDefaultAsync(c => c.IdProducto == avatar.Idproducto);
                 OnlyProd.IsActive = 0;
                 _dbContext.Productos.Update(OnlyProd);
                 await SaveAllAsync();
@@ -41,7 +41,7 @@ namespace ECommerce.Common.Application.Implementacion
         {
             try
             {
-                var producto = await _dbContext.Productos.FirstOrDefaultAsync(c => c.Idproducto == id);
+                var producto = await _dbContext.Productos.FirstOrDefaultAsync(c => c.IdProducto == id);
                 if (producto == null)
                 {
                     return new GenericResponse<Producto> { IsSuccess = false, Message = "No hay Datos!" };
@@ -66,9 +66,10 @@ namespace ECommerce.Common.Application.Implementacion
         public async Task<List<ProductoDto>> GetAllProductoAsync()
         {
             var listAll = await _dbContext.Productos
-                .Include(d => d.Departamento)
-                .Include(i => i.Iva)
-                .Include(m => m.MedidaNavigation)
+                //.Include(d => d.Departamento)
+                //.Include(i => i.Iva)
+                //.Include(m => m.MedidaNavigation)
+                //.Include(b => b.Barras)
                 .Where(c => c.IsActive == 1).ToListAsync();
             var ListDto = new List<ProductoDto>();
 
@@ -79,11 +80,21 @@ namespace ECommerce.Common.Application.Implementacion
             return ListDto;
         }
 
+        public async Task<List<Producto>> GetAllVMProductoAsync()
+        {
+            List<Producto> query = await _dbContext.Productos
+                .Include(d => d.Departamento)
+                .Include(m => m.MedidaNavigation)
+                .Include(i => i.Iva)
+                .Where(p=>p.IsActive==1).ToListAsync();
+            return query;
+        }
+
         public async Task<GenericResponse<ProductoDto>> GetOnlyProductoAsync(int id)
         {
             try
             {
-                var Only = await _dbContext.Productos.FirstOrDefaultAsync(c => c.Idproducto.Equals(id));
+                var Only = await _dbContext.Productos.FirstOrDefaultAsync(c => c.IdProducto.Equals(id));
                 if (Only == null)
                 {
                     return new GenericResponse<ProductoDto> { IsSuccess = false, Message = "No hay Datos!" };
@@ -102,7 +113,7 @@ namespace ECommerce.Common.Application.Implementacion
         {
             try
             {
-                var Onlyprod = await _dbContext.Productos.FirstOrDefaultAsync(c => c.Idproducto.Equals(id));
+                var Onlyprod = await _dbContext.Productos.FirstOrDefaultAsync(c => c.IdProducto.Equals(id));
                 if (Onlyprod == null)
                 {
                     return new GenericResponse<Producto> { IsSuccess = false, Message = "No hay Datos!" };
@@ -122,6 +133,32 @@ namespace ECommerce.Common.Application.Implementacion
             using (Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction = _dbContext.Database.BeginTransaction()) {
                 try
                 {
+                    Producto producto = new Producto() {
+                        Descripcion = avatar.Descripcion,
+                        Nombre = avatar.Nombre,
+                        IsActive = 1,
+                        DepartamentoId = avatar.DepartamentoId,
+                        Ivaid = avatar.Ivaid,
+                        MedidaId = avatar.MedidaId,
+                        Medida = avatar.Medida,
+                        Notas = avatar.Notas,
+                        Precio = avatar.Precio,
+                        Pieza = avatar.Pieza,
+                        Imagen = avatar.Imagen,
+                        PathImagen = avatar.PathImagen,
+                        GuidImagen = avatar.GuidImagen, 
+                    };
+                    _dbContext.Productos.Add(producto);
+
+                    await _dbContext.SaveChangesAsync();
+
+                    Barra barCode = new Barra() { 
+                        Idproducto = producto.IdProducto,
+                        Barcode =  avatar.Barcode,
+                    };
+
+                    _dbContext.Barras.Add(barCode);
+                    await _dbContext.SaveChangesAsync();
                     transaction.Commit();
                     return new GenericResponse<ProductoDto>
                     {
@@ -129,6 +166,26 @@ namespace ECommerce.Common.Application.Implementacion
                         Message = "Win - your data was changed successfully!",
                         Result = avatar
                     };
+                }
+                catch (DbUpdateException dbUpdateException)
+                {
+                    transaction.Rollback();
+                    if (dbUpdateException.InnerException.Message.Contains("duplicate"))
+                    {
+                        return new GenericResponse<ProductoDto>
+                        {
+                            IsSuccess = false,
+                            Message = "Ya existe una Producto  con el mismo nombre.",
+                        };
+                    }
+                    else
+                    {
+                        return new GenericResponse<ProductoDto>
+                        {
+                            IsSuccess = false,
+                            Message = dbUpdateException.InnerException.Message,
+                        };
+                    }
                 }
                 catch (Exception ex)
                 {
