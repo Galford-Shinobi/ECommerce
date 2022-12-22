@@ -14,11 +14,13 @@ namespace ECommerce.App.Controllers
     {
         private readonly IBodegaRepository _bodegaRepository;
         private readonly IFlashMessage _flashMessagee;
+        private readonly ILogger<BodegasController> _log;
 
-        public BodegasController(IBodegaRepository bodegaRepository, IFlashMessage flashMessagee)
+        public BodegasController(IBodegaRepository bodegaRepository, IFlashMessage flashMessagee, ILogger<BodegasController> log)
         {
             _bodegaRepository = bodegaRepository;
             _flashMessagee = flashMessagee;
+            _log = log;
         }
         public async Task<IActionResult> Index()
         {
@@ -37,6 +39,7 @@ namespace ECommerce.App.Controllers
                 var bodega = await _bodegaRepository.GetOnlyBodegaAsync(id);
                 if (!bodega.IsSuccess)
                 {
+                    _log.LogError($"ERROR: {bodega.Message}");
                     return NotFound();
                 }
 
@@ -64,7 +67,7 @@ namespace ECommerce.App.Controllers
                         {
                             _flashMessagee.Info("Registro creado.");
                         }
-                        else { _flashMessagee.Danger(ResultOnly.Message); }
+                        else { _flashMessagee.Danger(ResultOnly.Message); _log.LogError($"ERROR: {ResultOnly.ErrorMessage}{" "}{ResultOnly.Message}"); }
                     }
                     else //Update
                     {
@@ -72,6 +75,7 @@ namespace ECommerce.App.Controllers
                         if (id != avatar.BodegaId)
                         {
                             _flashMessagee.Danger("Los datos son incorrectos!");
+                            _log.LogError($"ERROR: {"Los datos son incorrectos!"}");
                             return View(avatar);
                         }
 
@@ -79,6 +83,7 @@ namespace ECommerce.App.Controllers
 
                         if (!Only.IsSuccess)
                         {
+                            _log.LogError($"ERROR: {Only.ErrorMessage}{" "}{Only.Message}");
                             return NotFound();
                         }
                         OnlyBodega = Only.Result;
@@ -94,16 +99,19 @@ namespace ECommerce.App.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        _flashMessagee.Danger("Ya existe una categoría con el mismo nombre.");
+                        _log.LogError($"ERROR: {"Ya existe una bodega con el mismo nombre "}");
+                        _flashMessagee.Danger("Ya existe una bodega con el mismo nombre.");
                     }
                     else
                     {
+                        _log.LogError($"ERROR: {dbUpdateException.InnerException.Message}");
                         _flashMessagee.Danger(dbUpdateException.InnerException.Message);
                     }
                     return View(avatar);
                 }
                 catch (Exception exception)
                 {
+                    _log.LogError($"ERROR: {exception}");
                     _flashMessagee.Danger(exception.Message);
                     return View(avatar);
                 }
@@ -119,12 +127,14 @@ namespace ECommerce.App.Controllers
         {
             if (id == null)
             {
+                _log.LogError($"ERROR: {"informacion falta del ID"}");
                 return NotFound();
             }
 
             var bodega = await _bodegaRepository.GetOnlyBodegaAsync(id.Value);
             if (!bodega.IsSuccess)
             {
+                _log.LogError($"ERROR: {bodega.Message}{" "} {bodega.ErrorMessage}");
                 return NotFound();
             }
 
@@ -132,6 +142,7 @@ namespace ECommerce.App.Controllers
 
             if (!onlyConcep.IsSuccess)
             {
+                _log.LogError($"ERROR: {onlyConcep.Message}{" "} {onlyConcep.ErrorMessage}");
                 return NotFound();
             }
 

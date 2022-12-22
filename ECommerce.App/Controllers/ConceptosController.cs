@@ -15,12 +15,13 @@ namespace ECommerce.App.Controllers
     {
         private readonly IConceptoRepository _conceptoRepository;
         private readonly IFlashMessage _flashMessagee;
-      
+        private readonly ILogger<ConceptosController> _log;
 
-        public ConceptosController(IConceptoRepository conceptoRepository, IFlashMessage flashMessagee)
+        public ConceptosController(IConceptoRepository conceptoRepository, IFlashMessage flashMessagee, ILogger<ConceptosController> log)
         {
             _conceptoRepository = conceptoRepository;
             _flashMessagee = flashMessagee;
+            _log = log;
         }
         public async Task<IActionResult> Index()
         {
@@ -38,6 +39,7 @@ namespace ECommerce.App.Controllers
                 var concepto = await _conceptoRepository.GetOnlyConceptoAsync(id);
                 if (!concepto.IsSuccess)
                 {
+                    _log.LogError($"ERROR: {concepto.ErrorMessage}{" "}{concepto.Message}");
                     return NotFound();
                 }
 
@@ -97,17 +99,20 @@ namespace ECommerce.App.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                       _flashMessagee.Danger("Ya existe una categoría con el mismo nombre.");
+                        _log.LogError($"ERROR: {"Ya existe una concepto con el mismo nombre."}");
+                        _flashMessagee.Danger("Ya existe una categoría con el mismo nombre.");
                     }
                     else
                     {
-                       _flashMessagee.Danger(dbUpdateException.InnerException.Message);
+                        _log.LogError($"ERROR: {dbUpdateException.Message}{" "}{dbUpdateException}");
+                        _flashMessagee.Danger(dbUpdateException.InnerException.Message);
                     }
                     return View(avatar);
                 }
                 catch (Exception exception)
                 {
                     _flashMessagee.Danger(exception.Message);
+                    _log.LogError($"ERROR: {exception}");
                     return View(avatar);
                 }
 
@@ -122,12 +127,14 @@ namespace ECommerce.App.Controllers
         {
             if (id == null)
             {
+                _log.LogError($"ERROR: {"informacion incorrecta!"}");
                 return NotFound();
             }
 
             var  concepto = await _conceptoRepository.GetOnlyConceptoAsync(id.Value);
             if (!concepto.IsSuccess)
             {
+                _log.LogError($"ERROR: {concepto.ErrorMessage}{" "}{concepto.Message}");
                 return NotFound();
             }
 
@@ -135,6 +142,7 @@ namespace ECommerce.App.Controllers
 
             if (!onlyConcep.IsSuccess)
             {
+                _log.LogError($"ERROR: {onlyConcep.ErrorMessage}{" "}{onlyConcep.Message}");
                 return NotFound();
             }
 

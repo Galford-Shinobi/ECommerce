@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using ECommerce.App.Helpers;
 using ECommerce.App.Helpers.Interfaces;
+using ECommerce.Common.Application.Implementacion;
 using ECommerce.Common.Application.Interfaces;
 using ECommerce.Common.Entities;
 using ECommerce.Common.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NLog.Fluent;
 using Vereyon.Web;
 using static ECommerce.App.Helpers.ModalHelper;
 
@@ -18,18 +20,20 @@ namespace ECommerce.App.Controllers
         private readonly ICombosHelper _combosHelper;
         private readonly IImageHelper _imageHelper;
         private readonly IMapper _mapper;
+        private readonly ILogger<ProductosController> _log;
 
-        public ProductosController(IProductoRepository productoRepository, IFlashMessage flashMessagee, ICombosHelper combosHelper, IImageHelper imageHelper,IMapper mapper)
+        public ProductosController(IProductoRepository productoRepository, IFlashMessage flashMessagee, ICombosHelper combosHelper, IImageHelper imageHelper,IMapper mapper, ILogger<ProductosController> log)
         {
             _productoRepository = productoRepository;
             _flashMessagee = flashMessagee;
             _combosHelper = combosHelper;
             _imageHelper = imageHelper;
             _mapper = mapper;
+            _log = log;
         }
         public async Task<IActionResult> Index()
         {
-            List<VMProducto> vmProductoLista = _mapper.Map<List<VMProducto>>(await _productoRepository.GetAllVMProductoAsync());
+            List<VMBarraProducto> vmProductoLista = _mapper.Map<List<VMBarraProducto>>(await _productoRepository.GetAllVMBarraProductoAsync());
             return View(vmProductoLista);
         }
 
@@ -51,11 +55,20 @@ namespace ECommerce.App.Controllers
                 var producto = await _productoRepository.GetOnlyProductoAsync(id);
                 if (!producto.IsSuccess)
                 {
+                    _log.LogError($"ERROR: {producto.Message}");
+                    return NotFound();
+                }
+
+                var code = await _productoRepository.RetrieveBarcode(id);
+                if (!code.IsSuccess)
+                {
+                    _log.LogError($"ERROR: {code.Message}");
                     return NotFound();
                 }
                 producto.Result.ComboDepartamentos = _combosHelper.GetComboDepartamentos();
                 producto.Result.ComboMedidas = _combosHelper.GetComboMedidums();
                 producto.Result.ComboIvas = _combosHelper.GetComboIvas();
+                producto.Result.Barcode = code.Result.Barcode;
                 return View(producto.Result);
             }
         }
@@ -91,7 +104,7 @@ namespace ECommerce.App.Controllers
                         {
                             _flashMessagee.Info("Registro creado.");
                         }
-                        else { _flashMessagee.Danger(ResultOnly.Message); }
+                        else { _flashMessagee.Danger(ResultOnly.Message); _log.LogError($"ERROR: {ResultOnly.Message}"); }
                     }
                     else //Update
                     {
@@ -99,6 +112,7 @@ namespace ECommerce.App.Controllers
                         if (id != avatar.Idproducto)
                         {
                             _flashMessagee.Danger("Los datos son incorrectos!");
+                            _log.LogError($"ERROR: Los datos son incorrectos!");
                             avatar.ComboDepartamentos = _combosHelper.GetComboDepartamentos();
                             avatar.ComboMedidas = _combosHelper.GetComboMedidums();
                             avatar.ComboIvas = _combosHelper.GetComboIvas();
@@ -106,36 +120,37 @@ namespace ECommerce.App.Controllers
                         }
                          pathByteArray = avatar.Imagen;
                          path = avatar.PathImagen;
-                         pathGuid = avatar.GuidImagen.ToString();
+                         
                         if (avatar.ImageFile != null)
                         {
                             path = await _imageHelper.UploadImageAsync(avatar.ImageFile, "Products");
                             pathByteArray = await _imageHelper.UploadImageArrayAsync(avatar.ImageFile);//model.ImageId = path;
                         }
-                        //var Only = await _medidumRepository.OnlyMedidumGetAsync(avatar.MedidaId);
 
-                        //if (!Only.IsSuccess)
-                        //{
-                        //    return NotFound();
-                        //}
-                        //OnlyMedid = Only.Result;
-                        //OnlyMedid.Descripcion = (avatar.Descripcion == Only.Result.Descripcion) ? Only.Result.Descripcion : avatar.Descripcion;
-                        //OnlyMedid.Escala = (avatar.Escala == Only.Result.Escala) ? Only.Result.Escala : avatar.Escala;
-                        //var result = await _medidumRepository.UpdateDataAsync(OnlyMedid);
+                        avatar.Imagen = pathByteArray;
+                        avatar.PathImagen = path;
+                        avatar.GuidImagen = avatar.GuidImagen;
 
-                        //if (result.IsSuccess)
-                        //    _flashMessagee.Info("Registro actualizado.");
-                        //else _flashMessagee.Danger(result.Message);
+                        var Only = await _productoRepository.ProductTransactionsUpdateAsync(avatar);
+
+                        if (!Only.IsSuccess)
+                        {
+                            _log.LogError($"ERROR: {Only.Message}");
+                          
+                            _flashMessagee.Danger(Only.Message); ;
+                        }
                     }
                 }
                 catch (DbUpdateException dbUpdateException)
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
+                        _log.LogError("ERROR: " + "Ya existe una categoría con el mismo nombre.");
                         _flashMessagee.Danger("Ya existe una categoría con el mismo nombre.");
                     }
                     else
                     {
+                        _log.LogError($"ERROR: {dbUpdateException.InnerException.Message}");
                         _flashMessagee.Danger(dbUpdateException.InnerException.Message);
                     }
                     avatar.ComboDepartamentos = _combosHelper.GetComboDepartamentos();
@@ -145,14 +160,15 @@ namespace ECommerce.App.Controllers
                 }
                 catch (Exception exception)
                 {
+                    _log.LogError("ERROR: " + exception);
                     _flashMessagee.Danger(exception.Message);
                     avatar.ComboDepartamentos = _combosHelper.GetComboDepartamentos();
                     avatar.ComboMedidas = _combosHelper.GetComboMedidums();
                     avatar.ComboIvas = _combosHelper.GetComboIvas();
                     return View(avatar);
                 }
-
-                return Json(new { isValid = true, html = ModalHelper.RenderRazorViewToString(this, "_ViewAll", await _productoRepository.GetAllProductoAsync()) });
+                List<VMBarraProducto> vmProductoLista = _mapper.Map<List<VMBarraProducto>>(await _productoRepository.GetAllVMBarraProductoAsync());
+                return Json(new { isValid = true, html = ModalHelper.RenderRazorViewToString(this, "_ViewAll", vmProductoLista) });
 
             }
 
@@ -160,6 +176,31 @@ namespace ECommerce.App.Controllers
             avatar.ComboMedidas = _combosHelper.GetComboMedidums();
             avatar.ComboIvas = _combosHelper.GetComboIvas();
             return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "AddOrEdit", avatar) });
+        }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var prod = await _productoRepository.GetOnlyProductoAsync(id.Value);
+            if (!prod.IsSuccess)
+            {
+                _log.LogError($"ERROR: {prod.Message}");
+                return NotFound();
+            }
+
+            var onlyProd = await _productoRepository.DeactivateProductoAsync(prod.Result);
+
+            if (!onlyProd.IsSuccess)
+            {
+                _log.LogError($"ERROR: {onlyProd.Message}");
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

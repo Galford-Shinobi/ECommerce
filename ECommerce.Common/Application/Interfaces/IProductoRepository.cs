@@ -12,6 +12,9 @@ namespace ECommerce.Common.Application.Interfaces
         Task<GenericResponse<Producto>> DeleteProductoAsync(int id);
         Task<GenericResponse<ProductoDto>> DeactivateProductoAsync(ProductoDto avatar);
         Task<GenericResponse<ProductoDto>> ProductTransactionsAsync(ProductoDto avatar);
+        Task<GenericResponse<ProductoDto>> ProductTransactionsUpdateAsync(ProductoDto avatar);
         Task<List<Producto>> GetAllVMProductoAsync();
+        Task<List<Barra>> GetAllVMBarraProductoAsync();
+        Task<GenericResponse<Barra>> RetrieveBarcode(int ProductId);
     }
 }

@@ -3,11 +3,14 @@ using ECommerce.App.Helpers.Interfaces;
 using ECommerce.App.Helpers.Repositories;
 using ECommerce.Common.Application.Implementacion;
 using ECommerce.Common.Application.Interfaces;
+using NLog.Extensions.Logging;
 using ECommerce.Common.DataBase;
 using ECommerce.Common.SExplMappers;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Vereyon.Web;
+using NLog;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +40,12 @@ builder.Services.Configure<JsonOptions>(options =>
     options.SerializerOptions.PropertyNamingPolicy = null;
     options.SerializerOptions.WriteIndented = true;
 });
+
+builder.Host.ConfigureLogging((hostingContext, logging) =>
+{
+    logging.AddNLog();
+});
+
 var app = builder.Build();
 
 SeedData();

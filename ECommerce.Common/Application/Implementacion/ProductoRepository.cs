@@ -66,10 +66,9 @@ namespace ECommerce.Common.Application.Implementacion
         public async Task<List<ProductoDto>> GetAllProductoAsync()
         {
             var listAll = await _dbContext.Productos
-                //.Include(d => d.Departamento)
-                //.Include(i => i.Iva)
-                //.Include(m => m.MedidaNavigation)
-                //.Include(b => b.Barras)
+                .Include(d => d.Departamento)
+                .Include(i => i.Iva)
+                .Include(m => m.MedidaNavigation)
                 .Where(c => c.IsActive == 1).ToListAsync();
             var ListDto = new List<ProductoDto>();
 
@@ -78,6 +77,19 @@ namespace ECommerce.Common.Application.Implementacion
                 ListDto.Add(_mapper.Map<ProductoDto>(list));
             }
             return ListDto;
+        }
+
+        public async Task<List<Barra>> GetAllVMBarraProductoAsync()
+        {
+            List<Barra> query = await _dbContext.Barras
+               .Include(p => p.IdproductoNavigation)
+               .ThenInclude(m => m.MedidaNavigation)
+               .Include(pi => pi.IdproductoNavigation)
+               .ThenInclude(i=> i.Iva)
+               .Include(pd => pd.IdproductoNavigation)
+               .ThenInclude(d => d.Departamento)
+               .Where(b => b.IdproductoNavigation.IsActive == 1).ToListAsync();
+            return query;
         }
 
         public async Task<List<Producto>> GetAllVMProductoAsync()
@@ -197,6 +209,127 @@ namespace ECommerce.Common.Application.Implementacion
                         Message = ex.Message,
                     };
                 }
+            }
+        }
+
+        public async Task<GenericResponse<ProductoDto>> ProductTransactionsUpdateAsync(ProductoDto avatar)
+        {
+            using (Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction = _dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+
+                    var producto = await _dbContext.Productos.FirstOrDefaultAsync(p => p.IsActive==1 && p.IdProducto.Equals(avatar.Idproducto));
+
+                    if (producto == null)
+                    {
+                        return new GenericResponse<ProductoDto>
+                        {
+                            IsSuccess = false,
+                            Message = "No hay informacion solicitada!!.",
+                        };
+                    }
+
+                    producto.Descripcion =  avatar.Descripcion ?? producto.Descripcion;
+                    producto.Nombre = avatar.Nombre ?? producto.Nombre;
+                    producto.Notas = avatar.Notas ?? producto.Notas;
+                    producto.Descripcion = avatar.Descripcion ?? producto.Descripcion;
+                    producto.DepartamentoId = avatar.DepartamentoId;
+                    producto.MedidaId = avatar.MedidaId;
+                    producto.Ivaid = avatar.Ivaid;
+                    producto.Medida = avatar.Medida;
+                    producto.Precio = avatar.Precio;
+                    producto.Pieza = avatar.Pieza;
+                    producto.GuidImagen = avatar.GuidImagen;
+                    producto.PathImagen = avatar.PathImagen ?? producto.PathImagen;
+                    producto.Imagen = avatar.Imagen;
+                    
+                    _dbContext.Productos.Update(producto);
+
+                    await _dbContext.SaveChangesAsync();
+
+                    var barCode = await _dbContext.Barras.FirstOrDefaultAsync(b => b.Idproducto == producto.IdProducto);
+
+
+                    if (barCode == null) {
+                        return new GenericResponse<ProductoDto>
+                        {
+                            IsSuccess = false,
+                            Message = "No hay informacion solicitada!!!.",
+                        };
+                    }
+
+                    barCode.Barcode = avatar.Barcode ?? barCode.Barcode;
+
+                    _dbContext.Barras.Update(barCode);
+                    await _dbContext.SaveChangesAsync();
+                    transaction.Commit();
+                    return new GenericResponse<ProductoDto>
+                    {
+                        IsSuccess = true,
+                        Message = "Win - your data was changed successfully!",
+                        Result = avatar
+                    };
+                }
+                catch (DbUpdateException dbUpdateException)
+                {
+                    transaction.Rollback();
+                    if (dbUpdateException.InnerException.Message.Contains("duplicate"))
+                    {
+                        return new GenericResponse<ProductoDto>
+                        {
+                            IsSuccess = false,
+                            Message = "Ya existe una Producto  con el mismo nombre.",
+                        };
+                    }
+                    else
+                    {
+                        return new GenericResponse<ProductoDto>
+                        {
+                            IsSuccess = false,
+                            Message = dbUpdateException.InnerException.Message,
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    transaction.Rollback();
+                    return new GenericResponse<ProductoDto>
+                    {
+                        IsSuccess = false,
+                        Message = ex.Message,
+                    };
+                }
+            }
+        }
+
+        public async Task<GenericResponse<Barra>> RetrieveBarcode(int ProductId)
+        {
+            try
+            {
+                var code = await _dbContext.Barras.FirstOrDefaultAsync(c => c.Idproducto.Equals(ProductId));
+                if (code == null)
+                {
+                    return new GenericResponse<Barra>
+                    {
+                        IsSuccess = false,
+                        Message = "No existe el codigo de barras",
+                    };
+                }
+                return new GenericResponse<Barra>
+                {
+                    IsSuccess = true,
+                    Result = code
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GenericResponse<Barra>
+                {
+                    IsSuccess = false,
+                    Message = ex.Message,
+                };
             }
         }
 
