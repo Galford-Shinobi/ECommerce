@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using System.Data.Common;
 using System.Data;
 using ECommerce.Common.Responses;
+using NLog.Fluent;
 
 namespace ECommerce.App.Helpers.Repositories
 {
@@ -33,6 +34,10 @@ namespace ECommerce.App.Helpers.Repositories
             {
 
                 affectedRows = -1;
+            }
+            finally {
+                db.Close();
+                db.Dispose();
             }
             return affectedRows;
         }
@@ -234,5 +239,31 @@ namespace ECommerce.App.Helpers.Repositories
                 Result = result,
             };
         }
+        //public async Task NuevoEmpleado(Empleado e)
+        //{
+        //    SqlConnection sqlConexion = conexion();
+        //    try
+        //    {
+        //        sqlConexion.Open();
+        //        var param = new DynamicParameters();
+        //        param.Add("@Nombre", e.Nombre, DbType.String, ParameterDirection.Input, 500);
+        //        param.Add("@CodEmpleado", e.CodEmpleado, DbType.String, ParameterDirection.Input, 4);
+        //        param.Add("@Email", e.Email, DbType.String, ParameterDirection.Input, 255);
+        //        param.Add("@Edad", e.Edad, DbType.Int32, ParameterDirection.Input);
+        //        param.Add("@FechaAlta", e.FechaAlta, DbType.DateTime, ParameterDirection.Input);
+        //        await sqlConexion.ExecuteScalarAsync("EmpleadoAlta", param, commandType: CommandType.StoredProcedure);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _log.LogError("ERROR: " + ex.ToString());
+        //        throw new Exception("Se produjo un error al dar de alta" + ex.Message);
+        //    }
+        //    finally
+        //    {
+        //        sqlConexion.Close();
+        //        sqlConexion.Dispose();
+        //    }
+
+        //}
     }
 }

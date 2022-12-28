@@ -6,9 +6,9 @@
     <!-- ============================================================
     =ESTILOS PARA ESTA PAGINA
     ===============================================================-->
-    <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
+   @* <link rel="stylesheet" href="~/vendor/datatables/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/responsive.dataTables.min.css">
-    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="~/vendor/datatables/extensiones/css/buttons.dataTables.min.css">*@
 }
     <div class="container-fluid">
         <div class="card mt-2">
@@ -41,6 +41,7 @@
         $(document).ready(function () {
             $('#tbdata').DataTable({
                 responsive: true,
+                processing: true,
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json",
                     "loadingRecords": "Cargando...",
@@ -53,7 +54,6 @@
             });
         });
     </script>
-
 
     <script>
         sc_deleteDialog.openModal('deleteItem', true, 'btnYesDelete', '/Productos/Delete/', false);
