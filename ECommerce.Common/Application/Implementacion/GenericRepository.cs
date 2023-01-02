@@ -26,6 +26,25 @@ namespace ECommerce.Common.Application.Implementacion
                     Result = entity,
                 };
             }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException.Message.Contains("duplicate"))
+                {
+                    return new GenericResponse<TEntity>
+                    {
+                        IsSuccess = false,
+                        Message = "Ya existe en el sistema verifique los datos!",
+                    };
+                }
+                else
+                {
+                    return new GenericResponse<TEntity>
+                    {
+                        IsSuccess = false,
+                        Message = dbUpdateException.InnerException.Message,
+                    };
+                }
+            }
             catch (Exception exc)
             {
                 return new GenericResponse<TEntity>
@@ -76,6 +95,25 @@ namespace ECommerce.Common.Application.Implementacion
                     IsSuccess = true,
                     Result = entity,
                 };
+            }
+            catch (DbUpdateException dbUpdateException)
+            {
+                if (dbUpdateException.InnerException.Message.Contains("duplicate"))
+                {
+                    return new GenericResponse<TEntity>
+                    {
+                        IsSuccess = false,
+                        Message = "Ya existe en el sistema verifique los datos!",
+                    };
+                }
+                else
+                {
+                    return new GenericResponse<TEntity>
+                    {
+                        IsSuccess = false,
+                        Message = dbUpdateException.InnerException.Message,
+                    };
+                }
             }
             catch (Exception exc)
             {

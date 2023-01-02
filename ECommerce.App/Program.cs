@@ -3,11 +3,14 @@ using ECommerce.App.Helpers.Interfaces;
 using ECommerce.App.Helpers.Repositories;
 using ECommerce.Common.Application.Implementacion;
 using ECommerce.Common.Application.Interfaces;
+using NLog.Extensions.Logging;
 using ECommerce.Common.DataBase;
 using ECommerce.Common.SExplMappers;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Vereyon.Web;
+using NLog;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,11 +25,13 @@ builder.Services.AddDbContext<ECommerceDbContext>(o =>
 
 builder.Services.AddAutoMapper(typeof(SpExplorationMapper));
 builder.Services.AddTransient<SeedDb>();
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddFlashMessage();
 
 //Register dapper in scope    
 builder.Services.AddScoped<IDapperRepository, DapperRepository>();
+builder.Services.AddScoped<ICombosHelper, CombosHelper>();
+builder.Services.AddScoped<IImageHelper, ImageHelper>();
 
 // Set the JSON serializer options
 builder.Services.Configure<JsonOptions>(options =>
@@ -35,6 +40,12 @@ builder.Services.Configure<JsonOptions>(options =>
     options.SerializerOptions.PropertyNamingPolicy = null;
     options.SerializerOptions.WriteIndented = true;
 });
+
+builder.Host.ConfigureLogging((hostingContext, logging) =>
+{
+    logging.AddNLog();
+});
+
 var app = builder.Build();
 
 SeedData();

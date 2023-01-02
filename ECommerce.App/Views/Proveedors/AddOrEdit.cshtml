@@ -1,0 +1,109 @@
+﻿@model ProveedorViewModel
+@{
+    ViewData["Title"] = "AddOrEdit";
+    Layout = null;
+}
+
+<h1>AddOrEdit</h1>
+<div class="container text-center smfont">
+    <form asp-action="AddOrEdit" autocomplete="off" asp-route-id="@Model.Idproveedor" onsubmit="return jQueryAjaxPost(this);">
+        <div class="box-body">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Idproveedor" />
+
+            <div class="row justify-content-md-center">
+                <div class="col col-md-4">
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Nombre" class="control-label"></label>
+                        <input asp-for="Nombre" class="form-control smfont" placeholder="Nombre" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-auto">
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Correo" class="control-label"></label>
+                        <input asp-for="Correo" class="form-control smfont" placeholder="Correo Electronico" />
+                        <span asp-validation-for="Correo" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col col-md-4">
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="NombresContacto" class="control-label"></label>
+                        <input asp-for="NombresContacto" class="form-control smfont" placeholder="Nombres Contacto" />
+                        <span asp-validation-for="NombresContacto" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col col-md-4">
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="ApellidosContacto" class="control-label"></label>
+                        <input asp-for="ApellidosContacto" class="form-control smfont" placeholder="Apellidos Contacto" />
+                        <span asp-validation-for="ApellidosContacto" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-auto">
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Telefono1" class="control-label"></label>
+                        <input asp-for="Telefono1" class="form-control smfont" placeholder="Telefono" />
+                        <span asp-validation-for="Telefono1" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col col-md-4">
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Telefono2" class="control-label"></label>
+                        <input asp-for="Telefono2" class="form-control smfont" placeholder="Celular" />
+                        <span asp-validation-for="Telefono2" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col col-md-6">
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Direccion" class="control-label"></label>
+                        <textarea asp-for="Direccion" class="form-control  smfont" placeholder="Direccion"></textarea>
+                        <span asp-validation-for="Direccion" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-auto">
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Notas" class="control-label"></label>
+                        <textarea asp-for="Notas" class="form-control  smfont" placeholder="Notas"></textarea>
+                        <span asp-validation-for="Notas" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-md-auto">
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="Documento" class="control-label"></label>
+                        <input asp-for="Documento" class="form-control  smfont" placeholder="Documentos"/>
+                        <span asp-validation-for="Documento" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col col-md-6">
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="TipoDocumentoId" class="control-label"></label>
+                        <select asp-for="TipoDocumentoId" asp-items="Model.ComboTipoDocumentos" class="form-control smfont"></select>
+                        <span asp-validation-for="TipoDocumentoId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="modal"><i class="bi bi-x-octagon"></i> Cancelar</button>
+            <button type="submit" class="btn btn-sm btn-outline-success"><i class="bi bi-save-fill"></i> Guardar</button>
+        </div>
+    </form>
+    
+</div>

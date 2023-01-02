@@ -1,0 +1,100 @@
+﻿@model IEnumerable<ProveedorDto>
+@if (Model.Count() > 0)
+{
+    <table class="table table-striped table-responsive-md table-bordered smfont" id="ProveedorTable" style="width:100%">
+        <colgroup>
+            <col span="1" />
+            <col span="1" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NombresContacto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ApellidosContacto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Correo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Direccion)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Documento)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Telefono1)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Telefono2)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DocumentoTipo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsActive)
+                </th>
+                <th>
+                    <a onclick="showInPopup('@Url.Action("AddOrEdit", "Proveedors", new { id = 0 }, Context.Request.Scheme)' , 'Nueva Departamentos')" class="btn btn-sm btn-secondary text-white"><i class="bi bi-plus-square-fill"></i> Proveedor </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombresContacto)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ApellidosContacto)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Correo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Direccion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Documento)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Telefono1)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Telefono2)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DocumentoTipo)
+                    </td>
+                    <td>
+                        @if (@item.IsActive == 1)
+                        {
+                            <h5><span class="badge rounded-pill bg-info text-dark">Activo</span></h5>
+                        }
+                        else
+                        {
+                            <h5><span class="badge rounded-pill bg-danger text-dark">No Activo</span></h5>
+                        }
+                    </td>
+                    <td>
+                        <a onclick="showInPopup('@Url.Action("AddOrEdit", "Proveedors", new { id = item.Idproveedor }, Context.Request.Scheme)' , 'Actualizar Proveedor')" class="btn btn-sm btn-outline-warning"><i class="bi bi-pencil-square"></i> </a>
+                        <button data-id="@item.Idproveedor" class="btn btn-sm btn-outline-danger deleteItem" data-bs-toggle="modal" data-bs-target="#deleteDialog"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p> No Hay registros de Proveedors </p>
+    <a onclick="showInPopup('@Url.Action("AddOrEdit", "Proveedors", new { id = 0 }, Context.Request.Scheme)' , 'Nueva Proveedor')" class="btn btn-sm btn-secondary text-white"><i class="bi bi-plus-square-fill"></i> Proveedor</a>
+}

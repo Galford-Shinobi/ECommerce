@@ -5,7 +5,13 @@ namespace ECommerce.Common.Entities
 {
     public partial class Producto
     {
-        public int Idproducto { get; set; }
+        public Producto()
+        {
+            Barras = new HashSet<Barra>();
+            BodegaProductos = new HashSet<BodegaProducto>();
+        }
+
+        public int IdProducto { get; set; }
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public int DepartamentoId { get; set; }
@@ -18,9 +24,13 @@ namespace ECommerce.Common.Entities
         public int MedidaId { get; set; }
         public double Medida { get; set; }
         public decimal? Pieza { get; set; }
+        public int? IsActive { get; set; }
+        public DateTime? RegistrationDate { get; set; }
 
         public virtual Departamento Departamento { get; set; }
         public virtual Iva Iva { get; set; }
         public virtual Medidum MedidaNavigation { get; set; }
+        public virtual ICollection<Barra> Barras { get; set; }
+        public virtual ICollection<BodegaProducto> BodegaProductos { get; set; }
     }
 }

@@ -8,6 +8,7 @@ namespace ECommerce.Common.Entities
         public AspNetUser()
         {
             AspNetUserRoles = new HashSet<AspNetUserRole>();
+            HistorialRefreshTokens = new HashSet<HistorialRefreshToken>();
         }
 
         public Guid UserId { get; set; }
@@ -36,5 +37,6 @@ namespace ECommerce.Common.Entities
 
         public virtual Genero Gender { get; set; }
         public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
+        public virtual ICollection<HistorialRefreshToken> HistorialRefreshTokens { get; set; }
     }
 }
