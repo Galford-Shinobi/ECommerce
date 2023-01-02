@@ -19,10 +19,17 @@ namespace ECommerce.Common.DataBase
         public virtual DbSet<Concepto> Conceptos { get; set; }
         public virtual DbSet<Departamento> Departamentos { get; set; }
         public virtual DbSet<Genero> Generos { get; set; }
+        public virtual DbSet<HistorialRefreshToken> HistorialRefreshTokens { get; set; }
         public virtual DbSet<Iva> Ivas { get; set; }
         public virtual DbSet<Medidum> Medida { get; set; }
+        public virtual DbSet<Menu> Menus { get; set; }
         public virtual DbSet<Producto> Productos { get; set; }
+        public virtual DbSet<Proveedor> Proveedors { get; set; }
+        public virtual DbSet<RolMenu> RolMenus { get; set; }
         public virtual DbSet<TipoDocumento> TipoDocumentos { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AspNetRole>(entity =>
@@ -291,6 +298,33 @@ namespace ECommerce.Common.DataBase
                 entity.Property(e => e.RegistrationDate).HasColumnType("datetime");
             });
 
+            modelBuilder.Entity<HistorialRefreshToken>(entity =>
+            {
+                entity.HasKey(e => e.IdHistorialToken)
+                    .HasName("PK__Historia__03DC48A57E256263");
+
+                entity.ToTable("HistorialRefreshToken");
+
+                entity.Property(e => e.EsActivo).HasComputedColumnSql("(case when [FechaExpiracion]<getdate() then CONVERT([bit],(0)) else CONVERT([bit],(1)) end)", false);
+
+                entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+
+                entity.Property(e => e.FechaExpiracion).HasColumnType("datetime");
+
+                entity.Property(e => e.RefreshToken)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Token)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.HistorialRefreshTokens)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__Historial__UserI__71D1E811");
+            });
+
             modelBuilder.Entity<Iva>(entity =>
             {
                 entity.ToTable("IVA");
@@ -340,6 +374,50 @@ namespace ECommerce.Common.DataBase
                 entity.Property(e => e.RegistrationDate)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
+            });
+
+            modelBuilder.Entity<Menu>(entity =>
+            {
+                entity.HasKey(e => e.IdMenu)
+                    .HasName("PK__Menu__C26AF483A9F8F8E2");
+
+                entity.ToTable("Menu");
+
+                entity.Property(e => e.IdMenu).HasColumnName("idMenu");
+
+                entity.Property(e => e.Controlador)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("controlador");
+
+                entity.Property(e => e.Descripcion)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("descripcion");
+
+                entity.Property(e => e.EsActivo).HasColumnName("esActivo");
+
+                entity.Property(e => e.FechaRegistro)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fechaRegistro")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Icono)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("icono");
+
+                entity.Property(e => e.IdMenuPadre).HasColumnName("idMenuPadre");
+
+                entity.Property(e => e.PaginaAccion)
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("paginaAccion");
+
+                entity.HasOne(d => d.IdMenuPadreNavigation)
+                    .WithMany(p => p.InverseIdMenuPadreNavigation)
+                    .HasForeignKey(d => d.IdMenuPadre)
+                    .HasConstraintName("FK__Menu__idMenuPadr__693CA210");
             });
 
             modelBuilder.Entity<Producto>(entity =>
@@ -394,6 +472,93 @@ namespace ECommerce.Common.DataBase
                     .HasConstraintName("FK_Producto_Medida");
             });
 
+            modelBuilder.Entity<Proveedor>(entity =>
+            {
+                entity.HasKey(e => e.Idproveedor);
+
+                entity.ToTable("Proveedor");
+
+                entity.HasIndex(e => e.Correo, "UQ__Proveedo__60695A193708DD75")
+                    .IsUnique();
+
+                entity.Property(e => e.Idproveedor).HasColumnName("IDProveedor");
+
+                entity.Property(e => e.ApellidosContacto)
+                    .IsRequired()
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.Correo)
+                    .IsRequired()
+                    .HasMaxLength(75)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Direccion).IsUnicode(false);
+
+                entity.Property(e => e.Documento)
+                    .IsRequired()
+                    .HasMaxLength(75);
+
+                entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(150)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NombresContacto)
+                    .IsRequired()
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.Notas).HasColumnType("text");
+
+                entity.Property(e => e.RegistrationDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Telefono1)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Telefono2)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.TipoDocumento)
+                    .WithMany(p => p.Proveedors)
+                    .HasForeignKey(d => d.TipoDocumentoId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Proveedor_TipoDocumento");
+            });
+
+            modelBuilder.Entity<RolMenu>(entity =>
+            {
+                entity.HasKey(e => e.IdRolMenu)
+                    .HasName("PK__RolMenu__CD2045D83018FBE0");
+
+                entity.ToTable("RolMenu");
+
+                entity.Property(e => e.IdRolMenu).HasColumnName("idRolMenu");
+
+                entity.Property(e => e.EsActivo).HasColumnName("esActivo");
+
+                entity.Property(e => e.FechaRegistro)
+                    .HasColumnType("datetime")
+                    .HasColumnName("fechaRegistro")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.IdMenu).HasColumnName("idMenu");
+
+                entity.HasOne(d => d.IdMenuNavigation)
+                    .WithMany(p => p.RolMenus)
+                    .HasForeignKey(d => d.IdMenu)
+                    .HasConstraintName("FK__RolMenu__idMenu__6E01572D");
+
+                entity.HasOne(d => d.Rol)
+                    .WithMany(p => p.RolMenus)
+                    .HasForeignKey(d => d.RolId)
+                    .HasConstraintName("FK__RolMenu__RolId__6D0D32F4");
+            });
+
             modelBuilder.Entity<TipoDocumento>(entity =>
             {
                 entity.ToTable("TipoDocumento");
@@ -410,10 +575,6 @@ namespace ECommerce.Common.DataBase
 
                 entity.Property(e => e.RegistrationDate).HasColumnType("datetime");
             });
-
-           
         }
-
-     
     }
 }

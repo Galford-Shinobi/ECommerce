@@ -19,8 +19,12 @@ namespace ECommerce.App.Data
             await CheckDepartamentosAsync();
             await CheckIvaAsync();
             await CheckMedidumAsync();
+            await CheckTipoDocumentosAsync();
             await CheckGeneroAsync();
+            await CheckRolesAsync();
         }
+
+       
         private async Task CheckConceptoAsync()
         {
             if (!_dataContext.Conceptos.Any())
@@ -29,6 +33,21 @@ namespace ECommerce.App.Data
                 _dataContext.Conceptos.Add(new Concepto { Descripcion = "Autoconsumo", IsActive = 1, RegistrationDate = DateTime.UtcNow });
                 _dataContext.Conceptos.Add(new Concepto { Descripcion = "Hurto", IsActive = 1, RegistrationDate = DateTime.UtcNow });
                 _dataContext.Conceptos.Add(new Concepto { Descripcion = "Donación", IsActive = 1, RegistrationDate = DateTime.UtcNow });
+                
+                await _dataContext.SaveChangesAsync();
+            }
+        }
+
+        private async Task CheckTipoDocumentosAsync()
+        {
+            if (!_dataContext.TipoDocumentos.Any())
+            {
+                _dataContext.TipoDocumentos.Add(new TipoDocumento { Descripcion = "INE", IsActive = 1, RegistrationDate = DateTime.UtcNow });
+                _dataContext.TipoDocumentos.Add(new TipoDocumento { Descripcion = "Cédula de Ciudadanía", IsActive = 1, RegistrationDate = DateTime.UtcNow });
+                _dataContext.TipoDocumentos.Add(new TipoDocumento { Descripcion = "NIT", IsActive = 1, RegistrationDate = DateTime.UtcNow });
+                _dataContext.TipoDocumentos.Add(new TipoDocumento { Descripcion = "Tarjeta de Identidad", IsActive = 1, RegistrationDate = DateTime.UtcNow });
+                _dataContext.TipoDocumentos.Add(new TipoDocumento { Descripcion = "Cédula de Extranjería", IsActive = 1, RegistrationDate = DateTime.UtcNow });
+                _dataContext.TipoDocumentos.Add(new TipoDocumento { Descripcion = "Cédula de Alienígena", IsActive = 1, RegistrationDate = DateTime.UtcNow });
                 
                 await _dataContext.SaveChangesAsync();
             }
@@ -123,6 +142,21 @@ namespace ECommerce.App.Data
                 _dataContext.Medida.Add(new Medidum { Descripcion = "Onza", Escala = "OZ", IsActive = 1, RegistrationDate = DateTime.UtcNow });
                 _dataContext.Medida.Add(new Medidum { Descripcion = "Unidad", Escala = "UN", IsActive = 1, RegistrationDate = DateTime.UtcNow });
 
+                await _dataContext.SaveChangesAsync();
+            }
+        }
+        private async Task CheckRolesAsync()
+        {
+            if (!_dataContext.AspNetRoles.Any())
+            {
+                var _rol = new List<AspNetRole>{
+                            new AspNetRole {RolId = Guid.NewGuid() , Rnombre  = "Administrator",     NormalizedName = "ADIMINSTRATOR",    IsActive =1 , RegistrationDate = DateTime.Now.ToUniversalTime() },
+                            new AspNetRole {RolId = Guid.NewGuid() , Rnombre  = "SuperUser",      NormalizedName = "SUPERUSER",      IsActive =1 , RegistrationDate = DateTime.Now.ToUniversalTime() },
+                            new AspNetRole {RolId = Guid.NewGuid() , Rnombre  = "User",     NormalizedName = "USER",     IsActive =1 , RegistrationDate = DateTime.Now.ToUniversalTime() },
+
+                };
+
+                _dataContext.AspNetRoles.AddRange(_rol);
                 await _dataContext.SaveChangesAsync();
             }
         }

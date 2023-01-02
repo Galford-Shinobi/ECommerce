@@ -75,5 +75,47 @@ namespace ECommerce.App.Helpers.Repositories
 
             return list;
         }
+
+        public IEnumerable<SelectListItem> GetComboProveedors()
+        {
+            List<SelectListItem> list = _dataContext.Proveedors
+              .Where(t => t.IsActive == 1)
+              .OrderBy(pt => pt.Idproveedor)
+               .Select(pt => new SelectListItem
+               {
+                   Text = $"{pt.Nombre.ToString()} {pt.NombresContacto.ToString()}",
+                   Value = pt.Idproveedor.ToString(),
+               })
+                .ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "(Selecciona un Proveedor...)",
+                Value = "0"
+            });
+
+            return list;
+        }
+
+        public IEnumerable<SelectListItem> GetComboTipoDocuemtnos()
+        {
+            List<SelectListItem> list = _dataContext.TipoDocumentos
+             .Where(t => t.IsActive == 1)
+             .OrderBy(pt => pt.TipoDocumentoId)
+              .Select(pt => new SelectListItem
+              {
+                  Text = $"{pt.Descripcion.ToString()}",
+                  Value = pt.TipoDocumentoId.ToString(),
+              })
+               .ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "(Selecciona un Tipo de Documento...)",
+                Value = "0"
+            });
+
+            return list;
+        }
     }
 }

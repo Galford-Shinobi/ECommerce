@@ -25,7 +25,7 @@ builder.Services.AddDbContext<ECommerceDbContext>(o =>
 
 builder.Services.AddAutoMapper(typeof(SpExplorationMapper));
 builder.Services.AddTransient<SeedDb>();
-builder.Services.AddApplication();
+builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddFlashMessage();
 
 //Register dapper in scope    

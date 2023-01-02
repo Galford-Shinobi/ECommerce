@@ -16,6 +16,19 @@ namespace ECommerce.Common.SExplMappers
             CreateMap<Iva, IvaDto>().ReverseMap();
             CreateMap<Medidum, MedidumDto>().ReverseMap();
             CreateMap<Producto, ProductoDto>().ReverseMap();
+            CreateMap<AspNetRole, RolDto>().ReverseMap();
+            #region Proveedor
+            CreateMap<Proveedor, ProveedorDto>()
+                .ForMember(destiny => destiny.IsActive,
+                opt => opt.MapFrom(origin => origin.IsActive==1?1: 0))
+                .ForMember(destiny => destiny.DocumentoTipo,
+                opt => opt.MapFrom(origin => origin.TipoDocumento.Descripcion));
+            CreateMap<ProveedorDto, Proveedor>()
+               .ForMember(destino =>
+                   destino.TipoDocumento,
+                   opt => opt.Ignore()
+               );
+            #endregion
             #region Producto
             CreateMap<Producto, VMProducto>()
                .ForMember(destiny => destiny.EsActivo,

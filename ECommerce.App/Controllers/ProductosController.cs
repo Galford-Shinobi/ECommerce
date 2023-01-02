@@ -104,7 +104,7 @@ namespace ECommerce.App.Controllers
                         {
                             _flashMessagee.Info("Registro creado.");
                         }
-                        else { _flashMessagee.Danger(ResultOnly.Message); _log.LogError($"ERROR: {ResultOnly.Message}"); }
+                        else { _flashMessagee.Danger(ResultOnly.Message); _log.LogError($"Repository - ERROR: {ResultOnly.Message}"); }
                     }
                     else //Update
                     {

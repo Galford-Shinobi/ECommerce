@@ -5,16 +5,19 @@ using System.Data.Common;
 using System.Data;
 using ECommerce.Common.Responses;
 using NLog.Fluent;
+using ECommerce.App.Controllers;
 
 namespace ECommerce.App.Helpers.Repositories
 {
     public class DapperRepository : IDapperRepository
     {
         private readonly IConfiguration _config;
+        private readonly ILogger<DapperRepository> _log;
         private string Connectionstring = "DefaultConnection";
-        public DapperRepository(IConfiguration config)
+        public DapperRepository(IConfiguration config, ILogger<DapperRepository> log)
         {
             _config = config;
+            _log = log;
         }
         public void Dispose()
         { }
@@ -30,10 +33,11 @@ namespace ECommerce.App.Helpers.Repositories
 
                 affectedRows = await db.ExecuteAsync(sp, parms, commandType: commandType);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
                 affectedRows = -1;
+                _log.LogError($"Error Dapper (ExecuteAsync)  : {ex}") ;
             }
             finally {
                 db.Close();
@@ -44,14 +48,32 @@ namespace ECommerce.App.Helpers.Repositories
 
         public List<T> GetAllAsync<T>(string sp, DynamicParameters parms, CommandType commandType = CommandType.StoredProcedure)
         {
-            using IDbConnection db = new SqlConnection(_config.GetConnectionString(Connectionstring));
-            return db.Query<T>(sp, parms, commandType: commandType).ToList();
+            try
+            {
+                using IDbConnection db = new SqlConnection(_config.GetConnectionString(Connectionstring));
+                return db.Query<T>(sp, parms, commandType: commandType).ToList();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError($"Error Dapper (GetAllAsync)  : {ex}");
+                return null;    
+            }
         }
 
         public T GetAsync<T>(string sp, DynamicParameters parms, CommandType commandType = CommandType.StoredProcedure)
         {
-            using IDbConnection db = new SqlConnection(_config.GetConnectionString(Connectionstring));
-            return db.Query<T>(sp, parms, commandType: commandType).FirstOrDefault();
+            object t = new object();
+            
+            try
+            {
+                using IDbConnection db = new SqlConnection(_config.GetConnectionString(Connectionstring));
+                return db.Query<T>(sp, parms, commandType: commandType).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError($"Error Dapper (GetAsync) : {sp} {ex}");
+                return (T)t;
+            }
         }
 
         public DbConnection GetDbconnection()
@@ -76,6 +98,7 @@ namespace ECommerce.App.Helpers.Repositories
             }
             catch (Exception ex)
             {
+                _log.LogError($"Error Dapper (GetFullAsync) : {sp} {ex}");
                 return new GenericResponse<T>
                 {
                     IsSuccess = false,
@@ -86,6 +109,7 @@ namespace ECommerce.App.Helpers.Repositories
             {
                 if (db.State == ConnectionState.Open)
                     db.Close();
+                    db.Dispose();
             }
         }
 
@@ -101,6 +125,7 @@ namespace ECommerce.App.Helpers.Repositories
             }
             catch (Exception ex)
             {
+                _log.LogError($"Error Dapper (GetOnlyAsync) : {sp} {ex}");
                 return new GenericResponse<T>
                 {
                     IsSuccess = false,
@@ -111,6 +136,7 @@ namespace ECommerce.App.Helpers.Repositories
             {
                 if (db.State == ConnectionState.Open)
                     db.Close();
+                    db.Dispose();
             }
             return new GenericResponse<T>
             {
@@ -131,6 +157,7 @@ namespace ECommerce.App.Helpers.Repositories
             }
             catch (Exception ex)
             {
+                _log.LogError($"Error Dapper (GetOnlyAvatarAsync) : {sp} {ex}");
                 return new GenericResponse<T>
                 {
                     IsSuccess = false,
@@ -141,6 +168,7 @@ namespace ECommerce.App.Helpers.Repositories
             {
                 if (db.State == ConnectionState.Open)
                     db.Close();
+                    db.Dispose();
             }
             return new GenericResponse<T>
             {
@@ -167,6 +195,7 @@ namespace ECommerce.App.Helpers.Repositories
                 catch (Exception ex)
                 {
                     tran.Rollback();
+                    _log.LogError($"Error Dapper (InsertAsync) : {sp} {ex}");
                     return new GenericResponse<T>
                     {
                         IsSuccess = false,
@@ -186,6 +215,7 @@ namespace ECommerce.App.Helpers.Repositories
             {
                 if (db.State == ConnectionState.Open)
                     db.Close();
+                    db.Dispose();
             }
             return new GenericResponse<T>
             {
@@ -212,6 +242,7 @@ namespace ECommerce.App.Helpers.Repositories
                 catch (Exception ex)
                 {
                     tran.Rollback();
+                    _log.LogError($"Error Dapper (UpdateAsync) : {sp} {ex}");
                     return new GenericResponse<T>
                     {
                         IsSuccess = false,
@@ -231,6 +262,7 @@ namespace ECommerce.App.Helpers.Repositories
             {
                 if (db.State == ConnectionState.Open)
                     db.Close();
+                    db.Dispose();
             }
 
             return new GenericResponse<T>

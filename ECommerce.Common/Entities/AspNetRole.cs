@@ -8,6 +8,7 @@ namespace ECommerce.Common.Entities
         public AspNetRole()
         {
             AspNetUserRoles = new HashSet<AspNetUserRole>();
+            RolMenus = new HashSet<RolMenu>();
         }
 
         public Guid RolId { get; set; }
@@ -17,5 +18,6 @@ namespace ECommerce.Common.Entities
         public DateTime? RegistrationDate { get; set; }
 
         public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
+        public virtual ICollection<RolMenu> RolMenus { get; set; }
     }
 }
