@@ -74,6 +74,8 @@ namespace ECommerce.Common.Models.Dtos
         [DataType(DataType.DateTime)]
         public DateTime RegistrationDate { get; set; }
 
+       
+
         public virtual ICollection<Departamento> Departamento { get; set; }
 
         public virtual ICollection<Iva> Iva { get; set; }

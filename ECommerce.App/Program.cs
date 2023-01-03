@@ -32,6 +32,7 @@ builder.Services.AddFlashMessage();
 builder.Services.AddScoped<IDapperRepository, DapperRepository>();
 builder.Services.AddScoped<ICombosHelper, CombosHelper>();
 builder.Services.AddScoped<IImageHelper, ImageHelper>();
+builder.Services.AddScoped<IConverterHelper, ConverterHelper>();   
 
 // Set the JSON serializer options
 builder.Services.Configure<JsonOptions>(options =>

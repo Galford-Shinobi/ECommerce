@@ -80,11 +80,11 @@ namespace ECommerce.App.Helpers.Repositories
         {
             List<SelectListItem> list = _dataContext.Proveedors
               .Where(t => t.IsActive == 1)
-              .OrderBy(pt => pt.Idproveedor)
+              .OrderBy(pt => pt.IDProveedor)
                .Select(pt => new SelectListItem
                {
                    Text = $"{pt.Nombre.ToString()} {pt.NombresContacto.ToString()}",
-                   Value = pt.Idproveedor.ToString(),
+                   Value = pt.IDProveedor.ToString(),
                })
                 .ToList();
 

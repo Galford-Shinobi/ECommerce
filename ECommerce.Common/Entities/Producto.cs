@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ECommerce.Common.Entities
 {
@@ -26,6 +27,9 @@ namespace ECommerce.Common.Entities
         public decimal? Pieza { get; set; }
         public int? IsActive { get; set; }
         public DateTime? RegistrationDate { get; set; }
+
+        [NotMapped]
+        public byte[] BarCodeImage { get; set; }
 
         public virtual Departamento Departamento { get; set; }
         public virtual Iva Iva { get; set; }

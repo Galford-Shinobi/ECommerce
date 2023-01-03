@@ -2,6 +2,8 @@
 using ECommerce.Common.Application.Implementacion;
 using ECommerce.Common.Entities;
 using ECommerce.Common.Models.Dtos;
+using System.Drawing.Imaging;
+using System.Drawing;
 using System.Globalization;
 
 namespace ECommerce.Common.SExplMappers
@@ -116,7 +118,9 @@ namespace ECommerce.Common.SExplMappers
                 .ForMember(destino =>
                     destino.Pieza,
                     opt => opt.MapFrom(origen => Convert.ToString(origen.IdproductoNavigation.Pieza.Value, new CultureInfo("es-Mex")))
-                );
+                )
+                 .ForMember(destiny => destiny.BarCodeImage,
+               opt => opt.MapFrom(origin => BarCodeIndex(origin.Barcode)));
 
 
             CreateMap<VMBarraProducto, Barra>()
@@ -127,6 +131,45 @@ namespace ECommerce.Common.SExplMappers
 
             #endregion
 
+
+
         }
+
+        #region MyBarCode
+        private string BarCodeIndex(string barcode)
+        {
+            string ImageBarCode;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                //The Image is drawn based on length of Barcode text.
+                using (Bitmap bitMap = new Bitmap(barcode.Length * 40, 80))
+                {
+                    //The Graphics library object is generated for the Image.
+                    using (Graphics graphics = Graphics.FromImage(bitMap))
+                    {
+                        //The installed Barcode font.
+                        Font oFont = new Font("IDAutomationHC39M Free Version", 16);
+                        PointF point = new PointF(2f, 2f);
+
+                        //White Brush is used to fill the Image with white color.
+                        SolidBrush whiteBrush = new SolidBrush(Color.White);
+                        graphics.FillRectangle(whiteBrush, 0, 0, bitMap.Width, bitMap.Height);
+
+                        //Black Brush is used to draw the Barcode over the Image.
+                        SolidBrush blackBrush = new SolidBrush(Color.Black);
+                        graphics.DrawString("*" + barcode + "*", oFont, blackBrush, point);
+                    }
+
+                    //The Bitmap is saved to Memory Stream.
+                    bitMap.Save(ms, ImageFormat.Png);
+
+                    //The Image is finally converted to Base64 string.
+                    ImageBarCode = "data:image/png;base64," + Convert.ToBase64String(ms.ToArray());
+                }
+            }
+
+            return ImageBarCode;
+        }
+        #endregion
     }
 }

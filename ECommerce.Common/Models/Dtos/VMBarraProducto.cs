@@ -30,6 +30,8 @@ namespace ECommerce.Common.Models.Dtos
         public string? NombreDepartamento { get; set; }
         public string? NombreIva { get; set; }
         public string? NombreMedida { get; set; }
+        [Display(Name = "Codigo Barras")]
+        public string BarCodeImage { get; set; }
 
         [Display(Name = "Presentacion")]
         public string PictureFullPath => string.IsNullOrEmpty(PathImagen)

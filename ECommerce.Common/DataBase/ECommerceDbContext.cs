@@ -474,14 +474,14 @@ namespace ECommerce.Common.DataBase
 
             modelBuilder.Entity<Proveedor>(entity =>
             {
-                entity.HasKey(e => e.Idproveedor);
+                entity.HasKey(e => e.IDProveedor);
 
                 entity.ToTable("Proveedor");
 
                 entity.HasIndex(e => e.Correo, "UQ__Proveedo__60695A193708DD75")
                     .IsUnique();
 
-                entity.Property(e => e.Idproveedor).HasColumnName("IDProveedor");
+                entity.Property(e => e.IDProveedor).HasColumnName("IDProveedor");
 
                 entity.Property(e => e.ApellidosContacto)
                     .IsRequired()

@@ -5,11 +5,13 @@
 }
 
 <h1>AddOrEdit</h1>
+<flash dismissable="true" />
 <div class="container text-center smfont">
     <form asp-action="AddOrEdit" autocomplete="off" asp-route-id="@Model.Idproveedor" onsubmit="return jQueryAjaxPost(this);">
         <div class="box-body">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Idproveedor" />
+          
 
             <div class="row justify-content-md-center">
                 <div class="col col-md-4">
