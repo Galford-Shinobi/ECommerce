@@ -4,7 +4,10 @@ using ECommerce.Common.DataBase;
 using ECommerce.Common.Entities;
 using ECommerce.Common.Models.Dtos;
 using ECommerce.Common.Responses;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing.Imaging;
+using System.Drawing;
 
 namespace ECommerce.Common.Application.Implementacion
 {
@@ -69,13 +72,20 @@ namespace ECommerce.Common.Application.Implementacion
                 .Include(d => d.Departamento)
                 .Include(i => i.Iva)
                 .Include(m => m.MedidaNavigation)
+                .Include(b => b.Barras)
                 .Where(c => c.IsActive == 1).ToListAsync();
+
             var ListDto = new List<ProductoDto>();
 
             foreach (var list in listAll)
             {
                 ListDto.Add(_mapper.Map<ProductoDto>(list));
+                foreach (var item in ListDto)
+                {
+                   
+                }
             }
+            
             return ListDto;
         }
 
@@ -89,6 +99,8 @@ namespace ECommerce.Common.Application.Implementacion
                .Include(pd => pd.IdproductoNavigation)
                .ThenInclude(d => d.Departamento)
                .Where(b => b.IdproductoNavigation.IsActive == 1).ToListAsync();
+
+
             return query;
         }
 
@@ -337,5 +349,7 @@ namespace ECommerce.Common.Application.Implementacion
         {
             return await _dbContext.SaveChangesAsync() > 0;
         }
+
+       
     }
 }

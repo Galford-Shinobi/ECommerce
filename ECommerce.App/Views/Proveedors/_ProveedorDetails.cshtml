@@ -1,0 +1,18 @@
+﻿@model ProveedorDto
+
+<h4>Concepto</h4>
+<hr />
+<dl class="row">
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Nombre)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.Nombre)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.DocumentoTipo)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.DocumentoTipo)
+    </dd>
+</dl>

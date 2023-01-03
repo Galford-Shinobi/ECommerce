@@ -26,5 +26,6 @@ namespace ECommerce.Common.Models.Dtos
         public int EsActivo { get; set; }
         public int? Stock { get; set; }
         public string? UrlImagen { get; set; }
+       
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ECommerce.Common.Entities
 {
     public partial class Proveedor
     {
-        public int Idproveedor { get; set; }
+        [Key]
+        public int IDProveedor { get; set; }
         public string Nombre { get; set; }
         public int TipoDocumentoId { get; set; }
         public string Documento { get; set; }

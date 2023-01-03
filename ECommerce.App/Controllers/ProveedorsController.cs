@@ -19,15 +19,17 @@ namespace ECommerce.App.Controllers
         private readonly ICombosHelper _combosHelper;
         private readonly IMapper _mapper;
         private readonly ILogger<ProveedorsController> _log;
+        private readonly IConverterHelper _converterHelper;
 
         public ProveedorsController(IProveedorRepository proveedorRepository, IFlashMessage flashMessagee,
-            ICombosHelper combosHelper, IMapper mapper, ILogger<ProveedorsController> log)
+            ICombosHelper combosHelper, IMapper mapper, ILogger<ProveedorsController> log, IConverterHelper converterHelper)
         {
             _proveedorRepository = proveedorRepository;
             _flashMessagee = flashMessagee;
             _combosHelper = combosHelper;
             _mapper = mapper;
             _log = log;
+            _converterHelper = converterHelper;
         }
         public async Task<IActionResult> Index()
         {
@@ -55,7 +57,7 @@ namespace ECommerce.App.Controllers
                 model.Documento = Provee.Result.Documento;
                 model.TipoDocumentoId = Provee.Result.TipoDocumentoId;
                 model.Documento = Provee.Result.Documento;
-                model.Idproveedor = Provee.Result.Idproveedor;
+                model.Idproveedor = Provee.Result.IDProveedor;
                 model.Telefono1 = Provee.Result.Telefono1;
                 model.Telefono2 = Provee.Result.Telefono2;
                 model.ApellidosContacto = Provee.Result.ApellidosContacto;
@@ -106,6 +108,26 @@ namespace ECommerce.App.Controllers
                             
                             return View(avatar);
                         }
+                        var OnlyProvee = await _proveedorRepository.GetOnlyProveedorAsync(avatar.Idproveedor);
+                        if (!OnlyProvee.IsSuccess)
+                        {
+                            _flashMessagee.Danger("Los datos son incorrectos!");
+                            _log.LogError($"OnlyProvee - ERROR: {OnlyProvee.ErrorMessage} - {OnlyProvee.Message}!");
+                            avatar.ComboTipoDocumentos = _combosHelper.GetComboTipoDocuemtnos();
+
+                            return View(avatar);
+                        }
+                        var proveedor =  _converterHelper.ToProveedorsAsync(avatar, false);
+                         var Result = await _proveedorRepository.OnlyUpDateAsync(avatar);
+                        if (!Result.IsSuccess)
+                        {
+                            _flashMessagee.Danger("Los datos son incorrectos!");
+                            _log.LogError($"OnlyProvee - ERROR: {Result.ErrorMessage} - {Result.Message}!");
+                            avatar.ComboTipoDocumentos = _combosHelper.GetComboTipoDocuemtnos();
+
+                            return View(avatar);
+                        }
+
                     }
                 }
                 catch (Exception ex)
@@ -117,6 +139,30 @@ namespace ECommerce.App.Controllers
             avatar.ComboTipoDocumentos = _combosHelper.GetComboTipoDocuemtnos();
             
             return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "AddOrEdit", avatar) });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var medidum = await _proveedorRepository.OnlyProveedorGetAsync(id.Value);
+            if (!medidum.IsSuccess)
+            {
+                return NotFound();
+            }
+
+            var onlyMedidum = await _proveedorRepository.DeleteProveedorAsync(medidum.Result.IDProveedor);
+
+            if (!onlyMedidum.IsSuccess)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

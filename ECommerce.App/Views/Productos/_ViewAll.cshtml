@@ -1,9 +1,17 @@
 ﻿@model IEnumerable<VMBarraProducto>
-
+@addTagHelper*, Microsoft.AspNetCore.Mvc.TagHelpers
 @if (Model.Count() > 0)
 {
-    <table class="table table-striped table-responsive-md table-bordered smfont" id="tbdata" style="width:100%">
+    <table class="table table-hover table-responsive-md table-bordered smfont" id="tbdata" style="width:100%">
         <colgroup>
+            <col span="1" />
+            <col span="1" />
+            <col span="1" />
+            <col span="1" />
+            <col span="1" />
+            <col span="1" />
+            <col span="1" />
+            <col span="1" />
             <col span="1" />
             <col span="1" />
             <col span="1" />
@@ -18,13 +26,7 @@
                     @Html.DisplayNameFor(model => model.Descripcion)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Barcode)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.NombreDepartamento)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.NombreIva)
+                    @Html.DisplayNameFor(model => model.BarCodeImage)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Precio)
@@ -38,6 +40,12 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Medida)
                 </th>
+                @*<th>
+                    @Html.DisplayNameFor(model => model.NombreDepartamento)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NombreIva)
+                </th>*@
                 <th>
                     @Html.DisplayNameFor(model => model.IsActive)
                 </th>
@@ -61,13 +69,8 @@
                         @Html.DisplayFor(modelItem => item.Descripcion)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Barcode)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.NombreDepartamento)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.NombreIva)
+                        @*@Html.DisplayFor(modelItem => item.BarCodeImage)*@
+                        <img src="@item.BarCodeImage" style="height:65px;width:200px;" />
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Precio)
@@ -81,6 +84,12 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Medida)
                     </td>
+                   @* <td>
+                        @Html.DisplayFor(modelItem => item.NombreDepartamento)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NombreIva)
+                    </td>*@
                     <td>
                         @if(@item.IsActive==1)
                         {
