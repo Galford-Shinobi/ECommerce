@@ -58,8 +58,8 @@ namespace ECommerce.App.Controllers
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
                     {
-                        _flashMessagee.Danger("Ya existe una categoría con el mismo nombre.");
-                        _log.LogError($"ERROR: {"Ya existe un departamento con el mismo nombre"}");
+                        _flashMessagee.Danger("Ya existe una Genero con el mismo nombre.");
+                        _log.LogError($"ERROR: {"Ya existe un Genero con el mismo nombre"}");
                     }
                     else
                     {
