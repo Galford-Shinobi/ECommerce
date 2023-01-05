@@ -22,9 +22,22 @@ namespace ECommerce.App.Data
             await CheckTipoDocumentosAsync();
             await CheckGeneroAsync();
             await CheckRolesAsync();
+            await CheckGendersAsync();
         }
 
-       
+
+        private async Task CheckGendersAsync()
+        {
+            if (!_dataContext.Generos.Any())
+            {
+                _dataContext.Generos.Add(new Genero { GeneroName= "Femenino", Description = "F", IsActive = 1, RegistrationDate = DateTime.UtcNow });
+                _dataContext.Generos.Add(new Genero { GeneroName = "Masculino", Description = "M", IsActive = 1, RegistrationDate = DateTime.UtcNow });
+                _dataContext.Generos.Add(new Genero { GeneroName = "Otr@s", Description = "OT", IsActive = 1, RegistrationDate = DateTime.UtcNow });
+               
+                await _dataContext.SaveChangesAsync();
+            }
+        }
+
         private async Task CheckConceptoAsync()
         {
             if (!_dataContext.Conceptos.Any())

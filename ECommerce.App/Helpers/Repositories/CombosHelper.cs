@@ -34,6 +34,27 @@ namespace ECommerce.App.Helpers.Repositories
             return list;
         }
 
+        public IEnumerable<SelectListItem> GetComboGeneros()
+        {
+            List<SelectListItem> list = _dataContext.Generos
+             .Where(t => t.IsActive == 1)
+             .OrderBy(pt => pt.GenderId)
+              .Select(pt => new SelectListItem
+              {
+                  Text = $"{pt.GeneroName.ToString()}",
+                  Value = pt.GenderId.ToString(),
+              })
+               .ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "(Selecciona tipo de Genero...)",
+                Value = "0"
+            });
+
+            return list;
+        }
+
         public IEnumerable<SelectListItem> GetComboIvas()
         {
             List<SelectListItem> list = _dataContext.Ivas

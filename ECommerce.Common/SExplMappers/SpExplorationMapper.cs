@@ -131,9 +131,15 @@ namespace ECommerce.Common.SExplMappers
 
             #endregion
 
+            #region Genero
 
+            CreateMap<Genero, GenderDto>().ReverseMap();
+
+            #endregion
 
         }
+
+
 
         #region MyBarCode
         private string BarCodeIndex(string barcode)

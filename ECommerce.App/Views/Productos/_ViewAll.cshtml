@@ -22,9 +22,9 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Nombre)
                 </th>
-                <th>
+                @*<th>
                     @Html.DisplayNameFor(model => model.Descripcion)
-                </th>
+                </th>*@
                 <th>
                     @Html.DisplayNameFor(model => model.BarCodeImage)
                 </th>
@@ -65,9 +65,9 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Nombre)
                     </td>
-                    <td>
+                    @*<td>
                         @Html.DisplayFor(modelItem => item.Descripcion)
-                    </td>
+                    </td>*@
                     <td>
                         @*@Html.DisplayFor(modelItem => item.BarCodeImage)*@
                         <img src="@item.BarCodeImage" style="height:65px;width:200px;" />

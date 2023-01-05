@@ -17,6 +17,7 @@ namespace ECommerce.Common.Application.Implementacion
             Services.AddScoped<IRolRepository, RolRepository>();
             Services.AddScoped<IUserFactoryRepository, UserFactoryRepository>();
             Services.AddScoped<IProveedorRepository, ProveedorRepository>();
+            Services.AddScoped<IGenderRepository, GenderRepository>();
         }
     }
 }

@@ -9,5 +9,6 @@ namespace ECommerce.App.Helpers.Interfaces
         IEnumerable<SelectListItem> GetComboIvas();
         IEnumerable<SelectListItem> GetComboProveedors();
         IEnumerable<SelectListItem> GetComboTipoDocuemtnos();
+        IEnumerable<SelectListItem> GetComboGeneros();
     }
 }
