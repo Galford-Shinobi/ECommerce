@@ -236,3 +236,12 @@ body {
         z-index: 1;
         content: ""
     }
+
+
+.divider:after,
+.divider:before {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #eee;
+}

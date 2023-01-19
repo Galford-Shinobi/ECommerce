@@ -46,6 +46,12 @@
                         <input asp-for="ImageFile" class="form-control" type="file" accept="image/*"/>
                         <span asp-validation-for="ImageFile" class="text-danger"></span>
                     </div>
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="DepartamentoId" class="control-label"></label>
+                        <select asp-for="DepartamentoId" asp-items="Model.ComboDepartamentos" class="form-control smfont"></select>
+                        <span asp-validation-for="DepartamentoId" class="text-danger"></span>
+                    </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
@@ -53,6 +59,18 @@
                         <label asp-for="Precio" class="control-label"></label>
                         <input asp-for="Precio" class="form-control smfont" type="number" step="0.01" />
                         <span asp-validation-for="Precio" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="HasOffer" class="control-label"></label>
+                        <input asp-for="HasOffer" class="form-check-input smfont" type="checkbox" checked="@(1 == 0)"/>
+                        <span asp-validation-for="HasOffer" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <span class="required">*</span>
+                        <label asp-for="OfferPrice" class="control-label"></label>
+                        <input asp-for="OfferPrice" class="form-control smfont" type="number" step="0.01" />
+                        <span asp-validation-for="OfferPrice" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <span class="required">*</span>
@@ -66,12 +84,7 @@
                         <input asp-for="Pieza" class="form-control smfont" type="number" />
                         <span asp-validation-for="Pieza" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <span class="required">*</span>
-                        <label asp-for="DepartamentoId" class="control-label"></label>
-                        <select asp-for="DepartamentoId" asp-items="Model.ComboDepartamentos" class="form-control smfont"></select>
-                        <span asp-validation-for="DepartamentoId" class="text-danger"></span>
-                    </div>
+                   
                     <div class="form-group">
                         <span class="required">*</span>
                         <label asp-for="Ivaid" class="control-label"></label>

@@ -46,7 +46,11 @@ namespace ECommerce.Common.SExplMappers
                .ForMember(destiny => destiny.Medida,
                opt => opt.MapFrom(origin => Convert.ToString(origin.Medida, new CultureInfo("es-Mex"))))
                .ForMember(destiny => destiny.Pieza,
-               opt => opt.MapFrom(origin => Convert.ToString(origin.Pieza.Value, new CultureInfo("es-Mex"))));
+               opt => opt.MapFrom(origin => Convert.ToString(origin.Pieza.Value, new CultureInfo("es-Mex"))))
+               .ForMember(destiny => destiny.HasOffer,
+               opt => opt.MapFrom(origin => origin.HasOffer == true?1:0))
+                .ForMember(destiny => destiny.OfferPrice,
+               opt => opt.MapFrom(origin => Convert.ToString(origin.OfferPrice.Value, new CultureInfo("es-Mex"))));
 
             CreateMap<VMProducto, Producto>()
               .ForMember(destiny => destiny.IsActive,
@@ -65,12 +69,20 @@ namespace ECommerce.Common.SExplMappers
               .ForMember(destiny => destiny.Medida,
               opt => opt.MapFrom(origin => Convert.ToDecimal(origin.Medida, new CultureInfo("es-Mex"))))
               .ForMember(destiny => destiny.Pieza,
-              opt => opt.MapFrom(origin => Convert.ToDecimal(origin.Pieza, new CultureInfo("es-Mex"))));
+              opt => opt.MapFrom(origin => Convert.ToDecimal(origin.Pieza, new CultureInfo("es-Mex"))))
+               .ForMember(destiny => destiny.HasOffer,
+              opt => opt.MapFrom(origin => origin.HasOffer == true ? true : false))
+              .ForMember(destiny => destiny.OfferPrice,
+              opt => opt.MapFrom(origin => Convert.ToDecimal(origin.OfferPrice, new CultureInfo("es-Mex"))));
             #endregion Producto
 
             #region Barra
 
             CreateMap<Barra, VMBarraProducto>()
+                .ForMember(destino =>
+                    destino.HasOffer,
+                    opt => opt.MapFrom(origen => origen.IdproductoNavigation.HasOffer == true ? 1 : 0)
+                )
                 .ForMember(destino =>
                     destino.IsActive,
                     opt => opt.MapFrom(origen => origen.IdproductoNavigation.IsActive == 1 ? 1 : 0)
@@ -119,8 +131,11 @@ namespace ECommerce.Common.SExplMappers
                     destino.Pieza,
                     opt => opt.MapFrom(origen => Convert.ToString(origen.IdproductoNavigation.Pieza.Value, new CultureInfo("es-Mex")))
                 )
-                 .ForMember(destiny => destiny.BarCodeImage,
-               opt => opt.MapFrom(origin => BarCodeIndex(origin.Barcode)));
+                .ForMember(destiny => destiny.BarCodeImage,
+                opt => opt.MapFrom(origin => BarCodeIndex(origin.Barcode)))
+                .ForMember(destino =>
+                    destino.OfferPrice,
+                    opt => opt.MapFrom(origen => Convert.ToString(origen.IdproductoNavigation.OfferPrice.Value, new CultureInfo("es-Mex"))));
 
 
             CreateMap<VMBarraProducto, Barra>()

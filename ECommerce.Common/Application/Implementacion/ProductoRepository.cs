@@ -170,7 +170,9 @@ namespace ECommerce.Common.Application.Implementacion
                         Pieza = avatar.Pieza,
                         Imagen = avatar.Imagen,
                         PathImagen = avatar.PathImagen,
-                        GuidImagen = avatar.GuidImagen, 
+                        GuidImagen = avatar.GuidImagen,
+                        HasOffer = avatar.HasOffer,
+                        OfferPrice= avatar.OfferPrice,
                     };
                     _dbContext.Productos.Add(producto);
 

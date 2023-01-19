@@ -57,24 +57,27 @@
                         <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
                     </ul>
                 </li>*@
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-dark" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administración</a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" asp-area="" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-thermometer-snow text-danger"></i> Dashboard</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" asp-area="" asp-controller="Conceptos" asp-action="Index"><i class="bi bi-list-columns-reverse  text-danger"></i> Conceptos</a></li>
-                        <li><a class="dropdown-item" asp-area="" asp-controller="Bodegas" asp-action="Index"><i class="bi bi-exclude text-danger"></i> Bodegas</a></li>
-                        <li><a class="dropdown-item" asp-area="" asp-controller="Departamentos" asp-action="Index"><i class="bi bi-aspect-ratio text-danger"></i> Departamentos</a></li>
-                        <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="Index"><i class="bi bi-gift-fill text-danger"></i> Productos</a></li>
-                        <li><a class="dropdown-item" asp-area="" asp-controller="Ivas" asp-action="Index"><i class="bi bi-unity text-danger"></i> Ivas</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" asp-area="" asp-controller="Medidum" asp-action="Index"><i class="bi bi-unity text-danger"></i> Medidas</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" asp-area="" asp-controller="Proveedors" asp-action="Index"><i class="bi bi-unity text-danger"></i> Proveedors</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" asp-area="" asp-controller="Genders" asp-action="Index"><i class="bi bi-unity text-danger"></i> Generos</a></li>
-                    </ul>
-                </li>
+                @if (User.Identity.IsAuthenticated && User.IsInRole("Administrator"))
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-dark" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Administración</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-thermometer-snow text-danger"></i> Dashboard</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Conceptos" asp-action="Index"><i class="bi bi-list-columns-reverse  text-danger"></i> Conceptos</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Bodegas" asp-action="Index"><i class="bi bi-exclude text-danger"></i> Bodegas</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Departamentos" asp-action="Index"><i class="bi bi-aspect-ratio text-danger"></i> Departamentos</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Productos" asp-action="Index"><i class="bi bi-gift-fill text-danger"></i> Productos</a></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Ivas" asp-action="Index"><i class="bi bi-unity text-danger"></i> Ivas</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Medidum" asp-action="Index"><i class="bi bi-unity text-danger"></i> Medidas</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Proveedors" asp-action="Index"><i class="bi bi-unity text-danger"></i> Proveedors</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" asp-area="" asp-controller="Genders" asp-action="Index"><i class="bi bi-unity text-danger"></i> Generos</a></li>
+                        </ul>
+                    </li>
+                }
             </ul>
             <form class="d-flex">
                 <button class="btn btn-outline-dark" type="submit">
@@ -88,10 +91,16 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#!">Settings</a></li>
-                        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Logout</a></li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li><a asp-area="" class="dropdown-item" asp-controller="Account" asp-action="ChangeUser"><i class="bi bi-person-badge  text-warning"></i> @User.Identity.Name </a></li>
+                            <li><a asp-area="" class="dropdown-item" asp-controller="Account" asp-action="Logout"><i class="bi bi-door-closed text-danger"></i> Signoff </a></li>
+                        }else
+                        {
+                            <li><a asp-area="" class="dropdown-item" asp-controller="Account" asp-action="MyLoginPartial"><i class="bi bi-door-open text-danger"></i> LogIn </a></li>
+                            <li><a class="dropdown-item" asp-controller="Account" asp-action="Register" class="btn btn-primary"> <i class="bi bi-person-add text-danger"></i> Register New User</a></li>
+                        }
                     </ul>
                 </li>
             </ul>

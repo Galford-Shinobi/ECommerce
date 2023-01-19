@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ECommerce.Common.Entities
 {
     public partial class Proveedor
     {
-        [Key]
         public int IDProveedor { get; set; }
         public string Nombre { get; set; }
         public int TipoDocumentoId { get; set; }

@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace ECommerce.Common.Entities
+namespace ECommerce.Common.Models.Dtos
 {
-    public partial class AspNetUser
+    public class UserResponseViewModel
     {
-        public AspNetUser()
-        {
-            AspNetUserRoles = new HashSet<AspNetUserRole>();
-            HistorialRefreshTokens = new HashSet<HistorialRefreshToken>();
-        }
-
         public Guid UserId { get; set; }
         public string UserName { get; set; }
         public string Dni { get; set; }
@@ -40,6 +32,8 @@ namespace ECommerce.Common.Entities
         [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}")]
         public DateTime? RegistrationDate { get; set; }
 
+        public string Password { get; set; }
+
         [Display(Name = "Logo")]
         public string PictureFullPath
         {
@@ -55,9 +49,5 @@ namespace ECommerce.Common.Entities
                     PicturePath.Substring(1));
             }
         }
-
-        public virtual Genero Gender { get; set; }
-        public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
-        public virtual ICollection<HistorialRefreshToken> HistorialRefreshTokens { get; set; }
     }
 }

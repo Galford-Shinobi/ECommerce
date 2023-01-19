@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
 namespace ECommerce.Common.Models
@@ -57,5 +58,8 @@ namespace ECommerce.Common.Models
         public string PicturePath { get; set; }
         public byte[] ImagePath { get; set; }
         public int? FirstTime { get; set; }
+        public string MyRolName { get; set; }
+        public string NormalizedName { get; set; }
+        public IEnumerable<SelectListItem> ComboGeneros { get; set; }
     }
 }

@@ -11,5 +11,7 @@ namespace ECommerce.Common.Application.Interfaces
         Task<GenericResponse<object>> AccessFailedCountAsync(LoginViewModel model);
         TokenResponse GetToken(string UserName);
         string GenerateJWTToken(UserResponse userInfo);
+        Task<GenericResponse<AvatarResponse>> GetUserByEmailAsync(string UserName);
+        Task<GenericResponse<AvatarResponse>> GetConfirmPasswordAsync(ConfirmPasswordViewModel model);
     }
 }

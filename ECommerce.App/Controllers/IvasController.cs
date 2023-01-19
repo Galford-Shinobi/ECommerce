@@ -1,11 +1,14 @@
 ﻿using ECommerce.Common.Application.Interfaces;
 using ECommerce.Common.Entities;
 using ECommerce.Common.Models.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using Vereyon.Web;
 
 namespace ECommerce.App.Controllers
 {
+    [Authorize(Roles = "Administrator")]
     public class IvasController : Controller
     {
         private readonly IIvaRepository _ivaRepository;

@@ -74,7 +74,13 @@ namespace ECommerce.Common.Models.Dtos
         [DataType(DataType.DateTime)]
         public DateTime RegistrationDate { get; set; }
 
-       
+        [Display(Name = "Tiene Oferta")]
+        public bool HasOffer { get; set; }
+
+        [Display(Name = "Precio de oferta")]
+        [DisplayFormat(DataFormatString = "{0:N2}")]
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal OfferPrice { get; set; }
 
         public virtual ICollection<Departamento> Departamento { get; set; }
 

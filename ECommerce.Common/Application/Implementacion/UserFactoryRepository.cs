@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Text;
 
@@ -56,7 +57,7 @@ namespace ECommerce.Common.Application.Implementacion
             try
             {
                 AspNetUser user = await _dataContext.AspNetUsers
-                .FirstOrDefaultAsync(x => x.UserName == model.Username);
+                .FirstOrDefaultAsync(x => x.Email == model.Username);
 
                 if (user == null)
                 {
@@ -208,7 +209,6 @@ namespace ECommerce.Common.Application.Implementacion
             }
         }
 
-
         public TokenResponse GetToken(string UserName)
         {
             Claim[] claims = new[]
@@ -266,6 +266,120 @@ namespace ECommerce.Common.Application.Implementacion
         private async Task<bool> SaveAllAsync()
         {
             return await _dataContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<GenericResponse<AvatarResponse>> GetUserByEmailAsync(string UserName)
+        {
+            try
+            {
+                AvatarResponse avatarResponse = new AvatarResponse();
+                var user = await _dataContext
+                    .AspNetUserRoles
+                    .Include(r => r.Rol)
+                    .Include(u => u.User)
+                    .FirstOrDefaultAsync(u => u.User.Email.Equals(UserName));
+                if (user == null)
+                {
+                    return new GenericResponse<AvatarResponse>
+                    {
+                        IsSuccess = false,
+                        Message = "Error 2019: Se ha producido un error en uno de los elementos principales. Corrige los errores o consulte a su Administrador!."
+                    };
+                }
+
+                avatarResponse.FirstName = user.User.FirstName;
+                avatarResponse.SurName = user.User.SurName;
+                avatarResponse.SecondSurName = user.User.SecondSurName;
+                avatarResponse.Age = user.User.Age;
+                avatarResponse.Dni = user.User.Dni;
+                avatarResponse.Email = user.User.Email;
+                avatarResponse.UserId = user.User.UserId;
+                avatarResponse.NickName = user.User.NickName;
+                avatarResponse.UserName = user.User.UserName;
+                avatarResponse.PicturefullPath = user.User.PictureFullPath;
+                avatarResponse.NormalizedName = user.Rol.NormalizedName.ToString();
+                avatarResponse.RolName = user.Rol.Rnombre;
+
+                return new GenericResponse<AvatarResponse>() { 
+                    IsSuccess= true,
+                    Result= avatarResponse
+                };
+            }
+            catch (Exception exception)
+            {
+                return new GenericResponse<AvatarResponse>() { 
+                 IsSuccess= false,
+                 ErrorMessage= exception.Message    
+                };
+            }
+        }
+        public async Task<GenericResponse<AvatarResponse>> GetConfirmPasswordAsync(ConfirmPasswordViewModel model)
+        {
+            using (Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction = _dataContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var Secret = _configuration["SecretP:SecretPassword"];
+
+                    if (Secret != model.OldPassword)
+                    {
+                        return new GenericResponse<AvatarResponse>
+                        {
+                            IsSuccess = false,
+                            Message = "wrong username or password",
+                            TruePasswordHash = -21,
+                        };
+                    }
+                    var _viewUser = await _dataContext
+                        .AspNetUsers
+                        .FirstOrDefaultAsync(u => u.Email.Equals(model.UserName) && u.FirstTime == 1);
+
+                    if (_viewUser == null)
+                    {
+                        return new GenericResponse<AvatarResponse>
+                        {
+                            IsSuccess = false,
+                            Message = "wrong username or password",
+                            TruePasswordHash = -22,
+                        };
+                    }
+
+                    if (!VerificaPasswordHash(model.OldPassword, _viewUser.PasswordHash, _viewUser.PasswordSalt))
+                    {
+                        return new GenericResponse<AvatarResponse>
+                        {
+                            IsSuccess = false,
+                            Message = "wrong username or password",
+                            TruePasswordHash = -23,
+                        };
+                    }
+                    byte[] passwordHash, passwordSalt;
+                    CrearPasswordHash(model.NewPassword, out passwordHash, out passwordSalt);
+                    _viewUser.IsActive = 1;
+                    _viewUser.FirstTime = 0;
+                    _viewUser.RegistrationDate = DateTime.Now.ToUniversalTime();
+                    _viewUser.PasswordHash = passwordHash;
+                    _viewUser.PasswordSalt = passwordSalt;
+                    _dataContext.AspNetUsers.Update(_viewUser);
+
+                    await _dataContext.SaveChangesAsync();
+                    transaction.Commit();
+                    return new GenericResponse<AvatarResponse>
+                    {
+                        IsSuccess = true,
+                        Message = "operation carried out successfully",
+                    };
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return new GenericResponse<AvatarResponse>
+                    {
+                        IsSuccess = false,
+                        Message = ex.Message,
+                    };
+                }
+            }
         }
     }
 }

@@ -1,0 +1,120 @@
+﻿@model LoginViewModel
+@{
+    ViewData["Title"] = "MyLoginPartial";
+}
+
+<section class="vh-100">
+    <div class="container py-5 h-100">
+        <div class="row d-flex align-items-center justify-content-center h-100">
+            <div class="col-md-8 col-lg-7 col-xl-6">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
+                     class="img-fluid" alt="Phone image">
+            </div>
+            <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+                <form asp-action="MyLoginPartial" method="post">
+                    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                  
+                    <!-- Email input -->
+                    <div class="form-outline mb-4">
+                        <input type="email" asp-for="Username" id="form1Example13" class="form-control form-control-lg" placeholder="User Name" required />
+                        <label class="form-label" for="form1Example13">Email address</label>
+                    </div>
+
+                    <!-- Password input -->
+                    <div class="form-outline mb-4">
+                        <input type="password" asp-for="Password" id="form1Example23" class="form-control form-control-lg" placeholder="Passworld" required />
+                        <label class="form-label" for="form1Example23">Password</label>
+                    </div>
+
+                    <div class="d-flex justify-content-around align-items-center mb-4">
+                        <!-- Checkbox -->
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="form1Example3" checked />
+                            <label class="form-check-label" for="form1Example3"> Remember me </label>
+                        </div>
+                        <a asp-action="RecoverPassword" class="btn btn-link">Forgot your password?</a>
+                        
+                    </div>
+
+                    <!-- Submit button -->
+                    <button type="submit" class="btn btn-primary btn-lg btn-block"><i class="bi bi-key"></i> Sign in</button>
+
+                    <div class="divider d-flex align-items-center my-4">
+                        <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="divcontent">
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+         <script type="text/javascript">
+                    function OpenAddPopup(){
+                    $.ajax({
+                        url: '/Account/LoadaddProductPopup',
+                        contentType: 'application/html; charset=utf-8',
+                        type: 'GET',
+                        dataType: 'html',
+                        success: function (result) {
+                            $('#divcontent').empty();
+                            $('#divcontent').html(result);
+                            $('#AddUpdateModelPopup').modal('show');
+                        },
+                        error: function (xhr, status) {
+                            alert(status);
+                        }
+                    })
+                }
+
+                //Add Data Function
+            function AddProduct() {
+                var res = ValidateForm();
+                if (res == false) {
+                    return false;
+                }
+                var jsonObj = {
+                    "UserName": $('#UserName').val(),
+                };
+
+                $.ajax({
+                    url: "@Url.Action("PartialRecoverPassword", "Account")",
+                    type: 'POST',
+                    data: JSON.stringify(jsonObj),
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (result) {
+                        //populate table with new record
+                        $('#AddUpdateModelPopup').modal('hide');
+                        alert(result);
+                        window.location.href = '/Account/MyLoginPartial/';
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+            }
+
+              function ValidateForm() {
+                var isValid = true;
+                if ($('#UserName').val().trim() == "") {
+                       var span = document.getElementById("mySpan");
+                       span.textContent = "Debe de capturar el usuario para poder realizar la accion!";
+                       $("#mySpan").css('color', 'Red');
+                       $("#mySpan").toggle();
+                    $('#UserName').css('border-color', 'Red');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+         </script>
+}

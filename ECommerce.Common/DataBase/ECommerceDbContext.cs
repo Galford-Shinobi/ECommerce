@@ -27,7 +27,6 @@ namespace ECommerce.Common.DataBase
         public virtual DbSet<Proveedor> Proveedors { get; set; }
         public virtual DbSet<RolMenu> RolMenus { get; set; }
         public virtual DbSet<TipoDocumento> TipoDocumentos { get; set; }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,9 +34,9 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<AspNetRole>(entity =>
             {
                 entity.HasKey(e => e.RolId)
-                    .HasName("PK__AspNetRo__F92302F1EC38ACED");
+                    .HasName("PK__AspNetRo__F92302F172BC1D4F");
 
-                entity.HasIndex(e => e.Rnombre, "UQ__AspNetRo__67C54CA9104E3E19")
+                entity.HasIndex(e => e.Rnombre, "UQ__AspNetRo__67C54CA99F314874")
                     .IsUnique();
 
                 entity.Property(e => e.RolId).HasDefaultValueSql("(newid())");
@@ -60,18 +59,18 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<AspNetUser>(entity =>
             {
                 entity.HasKey(e => e.UserId)
-                    .HasName("PK__AspNetUs__1788CC4C1F8423BB");
+                    .HasName("PK__AspNetUs__1788CC4CB532BD8C");
 
-                entity.HasIndex(e => e.NickName, "UQ__AspNetUs__01E67C8BD6B50815")
+                entity.HasIndex(e => e.NickName, "UQ__AspNetUs__01E67C8B169CFBDD")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Email, "UQ__AspNetUs__A9D10534596BD761")
+                entity.HasIndex(e => e.Email, "UQ__AspNetUs__A9D105343E8BFEA1")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Dni, "UQ__AspNetUs__C035B8DD12A6418D")
+                entity.HasIndex(e => e.Dni, "UQ__AspNetUs__C035B8DDE7A12F5D")
                     .IsUnique();
 
-                entity.HasIndex(e => e.UserName, "UQ__AspNetUs__C9F284569098A82D")
+                entity.HasIndex(e => e.UserName, "UQ__AspNetUs__C9F2845651B144E7")
                     .IsUnique();
 
                 entity.Property(e => e.UserId).ValueGeneratedNever();
@@ -149,7 +148,7 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<AspNetUserRole>(entity =>
             {
                 entity.HasKey(e => e.UserRolId)
-                    .HasName("PK__AspNetUs__80906A4CF0DD0769");
+                    .HasName("PK__AspNetUs__80906A4CA83270ED");
 
                 entity.HasOne(d => d.Rol)
                     .WithMany(p => p.AspNetUserRoles)
@@ -167,11 +166,11 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<Barra>(entity =>
             {
                 entity.HasKey(e => new { e.BarraId, e.Idproducto })
-                    .HasName("PK__Barra__6FA65B67854875FD");
+                    .HasName("PK__Barra__6FA65B670F03D2C3");
 
                 entity.ToTable("Barra");
 
-                entity.HasIndex(e => e.Barcode, "UQ__Barra__177800D3E0E3E070")
+                entity.HasIndex(e => e.Barcode, "UQ__Barra__177800D3899A9922")
                     .IsUnique();
 
                 entity.Property(e => e.BarraId).ValueGeneratedOnAdd();
@@ -194,7 +193,7 @@ namespace ECommerce.Common.DataBase
             {
                 entity.ToTable("Bodega");
 
-                entity.HasIndex(e => e.Descripcion, "UQ__Bodega__92C53B6CB960531B")
+                entity.HasIndex(e => e.Descripcion, "UQ__Bodega__92C53B6C88A61AE4")
                     .IsUnique();
 
                 entity.Property(e => e.Descripcion)
@@ -212,7 +211,7 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<BodegaProducto>(entity =>
             {
                 entity.HasKey(e => new { e.Idproducto, e.BodegaId })
-                    .HasName("PK__BodegaPr__E8A0DB1DFCF45016");
+                    .HasName("PK__BodegaPr__E8A0DB1D1FB95320");
 
                 entity.ToTable("BodegaProducto");
 
@@ -243,7 +242,7 @@ namespace ECommerce.Common.DataBase
             {
                 entity.ToTable("Concepto");
 
-                entity.HasIndex(e => e.Descripcion, "UQ__Concepto__92C53B6C9A7F70B3")
+                entity.HasIndex(e => e.Descripcion, "UQ__Concepto__92C53B6CF1758289")
                     .IsUnique();
 
                 entity.Property(e => e.Descripcion)
@@ -260,7 +259,7 @@ namespace ECommerce.Common.DataBase
             {
                 entity.ToTable("Departamento");
 
-                entity.HasIndex(e => e.Descripcion, "UQ__Departam__92C53B6C3267FCB5")
+                entity.HasIndex(e => e.Descripcion, "UQ__Departam__92C53B6C643F08D1")
                     .IsUnique();
 
                 entity.Property(e => e.Descripcion)
@@ -276,11 +275,11 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<Genero>(entity =>
             {
                 entity.HasKey(e => e.GenderId)
-                    .HasName("PK__Genero__4E24E9F749F2F08F");
+                    .HasName("PK__Genero__4E24E9F7A0AA7EBA");
 
                 entity.ToTable("Genero");
 
-                entity.HasIndex(e => e.GeneroName, "UQ__Genero__8BC59BC0D50AEF22")
+                entity.HasIndex(e => e.GeneroName, "UQ__Genero__8BC59BC0972EBA8F")
                     .IsUnique();
 
                 entity.Property(e => e.Description)
@@ -301,7 +300,7 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<HistorialRefreshToken>(entity =>
             {
                 entity.HasKey(e => e.IdHistorialToken)
-                    .HasName("PK__Historia__03DC48A57E256263");
+                    .HasName("PK__Historia__03DC48A5CD2F11C5");
 
                 entity.ToTable("HistorialRefreshToken");
 
@@ -322,14 +321,14 @@ namespace ECommerce.Common.DataBase
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.HistorialRefreshTokens)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Historial__UserI__71D1E811");
+                    .HasConstraintName("FK__Historial__UserI__6C190EBB");
             });
 
             modelBuilder.Entity<Iva>(entity =>
             {
                 entity.ToTable("IVA");
 
-                entity.HasIndex(e => e.Descripcion, "UQ__IVA__92C53B6C222B84C0")
+                entity.HasIndex(e => e.Descripcion, "UQ__IVA__92C53B6C92BAD990")
                     .IsUnique();
 
                 entity.Property(e => e.Ivaid).HasColumnName("IVAId");
@@ -351,12 +350,12 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<Medidum>(entity =>
             {
                 entity.HasKey(e => e.MedidaId)
-                    .HasName("PK__Medida__5F7A0C027DF5A235");
+                    .HasName("PK__Medida__5F7A0C0279D921CB");
 
-                entity.HasIndex(e => e.Descripcion, "UQ__Medida__92C53B6CF851FD34")
+                entity.HasIndex(e => e.Descripcion, "UQ__Medida__92C53B6C36B98006")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Escala, "UQ__Medida__9B63C44766751796")
+                entity.HasIndex(e => e.Escala, "UQ__Medida__9B63C4470111EA5E")
                     .IsUnique();
 
                 entity.Property(e => e.Descripcion)
@@ -379,7 +378,7 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<Menu>(entity =>
             {
                 entity.HasKey(e => e.IdMenu)
-                    .HasName("PK__Menu__C26AF483A9F8F8E2");
+                    .HasName("PK__Menu__C26AF4830D20FD1E");
 
                 entity.ToTable("Menu");
 
@@ -417,7 +416,7 @@ namespace ECommerce.Common.DataBase
                 entity.HasOne(d => d.IdMenuPadreNavigation)
                     .WithMany(p => p.InverseIdMenuPadreNavigation)
                     .HasForeignKey(d => d.IdMenuPadre)
-                    .HasConstraintName("FK__Menu__idMenuPadr__693CA210");
+                    .HasConstraintName("FK__Menu__idMenuPadr__6D0D32F4");
             });
 
             modelBuilder.Entity<Producto>(entity =>
@@ -429,6 +428,8 @@ namespace ECommerce.Common.DataBase
                 entity.Property(e => e.Descripcion)
                     .IsRequired()
                     .IsUnicode(false);
+
+                entity.Property(e => e.HasOffer).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.IsActive).HasDefaultValueSql("((1))");
 
@@ -442,6 +443,10 @@ namespace ECommerce.Common.DataBase
                     .IsUnicode(false);
 
                 entity.Property(e => e.Notas).IsUnicode(false);
+
+                entity.Property(e => e.OfferPrice)
+                    .HasColumnType("money")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.PathImagen).IsUnicode(false);
 
@@ -478,7 +483,7 @@ namespace ECommerce.Common.DataBase
 
                 entity.ToTable("Proveedor");
 
-                entity.HasIndex(e => e.Correo, "UQ__Proveedo__60695A193708DD75")
+                entity.HasIndex(e => e.Correo, "UQ__Proveedo__60695A19210DF758")
                     .IsUnique();
 
                 entity.Property(e => e.IDProveedor).HasColumnName("IDProveedor");
@@ -533,7 +538,7 @@ namespace ECommerce.Common.DataBase
             modelBuilder.Entity<RolMenu>(entity =>
             {
                 entity.HasKey(e => e.IdRolMenu)
-                    .HasName("PK__RolMenu__CD2045D83018FBE0");
+                    .HasName("PK__RolMenu__CD2045D8B3DEE10E");
 
                 entity.ToTable("RolMenu");
 
@@ -551,19 +556,19 @@ namespace ECommerce.Common.DataBase
                 entity.HasOne(d => d.IdMenuNavigation)
                     .WithMany(p => p.RolMenus)
                     .HasForeignKey(d => d.IdMenu)
-                    .HasConstraintName("FK__RolMenu__idMenu__6E01572D");
+                    .HasConstraintName("FK__RolMenu__idMenu__71D1E811");
 
                 entity.HasOne(d => d.Rol)
                     .WithMany(p => p.RolMenus)
                     .HasForeignKey(d => d.RolId)
-                    .HasConstraintName("FK__RolMenu__RolId__6D0D32F4");
+                    .HasConstraintName("FK__RolMenu__RolId__72C60C4A");
             });
 
             modelBuilder.Entity<TipoDocumento>(entity =>
             {
                 entity.ToTable("TipoDocumento");
 
-                entity.HasIndex(e => e.Descripcion, "UQ__TipoDocu__92C53B6C09C94391")
+                entity.HasIndex(e => e.Descripcion, "UQ__TipoDocu__92C53B6CF1F48CAE")
                     .IsUnique();
 
                 entity.Property(e => e.Descripcion)

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ECommerce.Common.Entities
+﻿namespace ECommerce.Common.Entities
 {
     public partial class Producto
     {
@@ -18,6 +14,8 @@ namespace ECommerce.Common.Entities
         public int DepartamentoId { get; set; }
         public int Ivaid { get; set; }
         public decimal? Precio { get; set; }
+        public bool? HasOffer { get; set; }
+        public decimal? OfferPrice { get; set; }
         public string Notas { get; set; }
         public byte[] Imagen { get; set; }
         public string PathImagen { get; set; }
@@ -27,9 +25,6 @@ namespace ECommerce.Common.Entities
         public decimal? Pieza { get; set; }
         public int? IsActive { get; set; }
         public DateTime? RegistrationDate { get; set; }
-
-        [NotMapped]
-        public byte[] BarCodeImage { get; set; }
 
         public virtual Departamento Departamento { get; set; }
         public virtual Iva Iva { get; set; }
