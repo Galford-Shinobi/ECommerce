@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Razor;
+using ECommerce.App.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 var Configuration = builder.Configuration;
@@ -59,6 +60,7 @@ builder.Services.AddScoped<IDapperRepository, DapperRepository>();
 builder.Services.AddScoped<ICombosHelper, CombosHelper>();
 builder.Services.AddScoped<IImageHelper, ImageHelper>();
 builder.Services.AddScoped<IConverterHelper, ConverterHelper>();
+builder.Services.AddScoped<IMailHelper, MailHelper>();
 
 // Set the JSON serializer options
 builder.Services.Configure<JsonOptions>(options =>

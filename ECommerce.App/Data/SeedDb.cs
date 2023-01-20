@@ -191,7 +191,7 @@ namespace ECommerce.App.Data
                 PicturePath = $"{"~/image/QuinlanVos.png"}",
                 Password = "User*123456", },};
 
-          await  CheckUserAsync(userModel, UserType.Administrator.ToString());
+          await  CheckUserAsync(userModel, UserType.SuperUser.ToString());
         }
         private static void CrearPasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
@@ -249,7 +249,7 @@ namespace ECommerce.App.Data
                             Age = item.Age,
                             NickName = item.NickName,
                             PicturePath = string.IsNullOrEmpty(item.PicturePath) ? null : item.PicturePath,
-                            FirstTime = 1,
+                            FirstTime = 0,
                             IsActive = 1,
                             AccessFailedCount = 0,
                             RegistrationDate = DateTime.Now.ToUniversalTime(),

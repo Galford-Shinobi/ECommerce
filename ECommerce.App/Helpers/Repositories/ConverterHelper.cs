@@ -10,7 +10,7 @@ namespace ECommerce.App.Helpers.Repositories
         {
             return new Proveedor
             {
-                IDProveedor = isNew ? 0 : model.Idproveedor,
+                Idproveedor = isNew ? 0 : model.Idproveedor,
                 Nombre = model.Nombre,
                 Correo = model.Correo,
                 Direccion = model.Direccion,

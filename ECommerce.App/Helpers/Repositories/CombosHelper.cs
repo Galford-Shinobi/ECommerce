@@ -101,11 +101,11 @@ namespace ECommerce.App.Helpers.Repositories
         {
             List<SelectListItem> list = _dataContext.Proveedors
               .Where(t => t.IsActive == 1)
-              .OrderBy(pt => pt.IDProveedor)
+              .OrderBy(pt => pt.Idproveedor)
                .Select(pt => new SelectListItem
                {
                    Text = $"{pt.Nombre.ToString()} {pt.NombresContacto.ToString()}",
-                   Value = pt.IDProveedor.ToString(),
+                   Value = pt.Idproveedor.ToString(),
                })
                 .ToList();
 

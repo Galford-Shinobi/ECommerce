@@ -1,8 +1,11 @@
 ﻿using ECommerce.App.Helpers;
 using ECommerce.App.Helpers.Interfaces;
+using ECommerce.Common.Application.Implementacion;
 using ECommerce.Common.Application.Interfaces;
+using ECommerce.Common.Entities;
 using ECommerce.Common.Models;
 using ECommerce.Common.Models.Dtos;
+using ECommerce.Common.Responses;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -20,15 +23,17 @@ namespace ECommerce.App.Controllers
         private readonly ICombosHelper _combosHelper;
         private readonly IFlashMessage _flashMessage;
         private readonly ILogger<BodegasController> _log;
+        private readonly IMailHelper _mailHelper;
 
         public AccountController(IConfiguration configuration, IUserFactoryRepository userFactoryRepository
-            , ICombosHelper combosHelper, IFlashMessage flashMessagee, ILogger<BodegasController> log)
+            , ICombosHelper combosHelper, IFlashMessage flashMessagee, ILogger<BodegasController> log, IMailHelper mailHelper)
         {
             _configuration = configuration;
             _userFactoryRepository = userFactoryRepository;
-           _combosHelper = combosHelper;
-           _flashMessage = flashMessagee;
-           _log = log;
+            _combosHelper = combosHelper;
+            _flashMessage = flashMessagee;
+            _log = log;
+            _mailHelper = mailHelper;
         }
         public IActionResult Index()
         {
@@ -128,10 +133,10 @@ namespace ECommerce.App.Controllers
             await HttpContext.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
+        
         [HttpGet]
-        //[Authorize(Roles = "Adminstrador,Distribuidor,MesaControl")]
-        //[Authorize(Roles = UserRoles.AdminFull)]
-        public async Task<IActionResult> Register() 
+        [Authorize(Roles = UserRolesResponsive.AdminSuperUser)]
+        public async Task<IActionResult> Register()
         {
             if (User.Identity.Name == null)
             {
@@ -216,6 +221,128 @@ namespace ECommerce.App.Controllers
                 _flashMessage.Danger(_result.Message, "Incorrect information check");
             }
             _flashMessage.Danger("no Data.....", "Incorrect information check");
+            return View(model);
+        }
+
+        public IActionResult LoadaddProductPopup()
+        {
+            RecoverPasswordViewModel _model = new RecoverPasswordViewModel();
+            try
+            {
+                return PartialView("_RecoverPassword", _model);
+            }
+            catch (Exception)
+            {
+                return PartialView("_RecoverPassword", _model);
+            }
+        }
+
+        public IActionResult RecoverPasswordDialog()
+        {
+            return View(new RecoverPasswordViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecoverPasswordDialog(RecoverPasswordViewModel model)
+        {
+            if (ModelState.IsValid) 
+            {
+                var  user = await _userFactoryRepository.GetUserByEmailAsync(model.UserName);
+                if (user == null)
+                {
+                    _flashMessage.Danger("El email no corresponde a ningún usuario registrado.");
+                    return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "RecoverPasswordDialog", model) });
+                }
+
+                var _ResultToken = await _userFactoryRepository.GeneratePasswordResetTokenAsync(model);
+
+                if (!_ResultToken.IsSuccess)
+                {
+                   
+                    _flashMessage.Danger("El Token no corresponde a ningún usuario registrado.", _ResultToken.ErrorMessage);
+                    return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "RecoverPasswordDialog", model) });
+                }
+                Guid activationCode = Guid.NewGuid();
+                var TblResetP = new TblResetPassword
+                {
+                    ResetPasswordId = Guid.NewGuid(),
+                    UserId = _ResultToken.Result.ObtainUser.UserId,
+                    UserName = _ResultToken.Result.ObtainUser.UserName,
+                    Jwt = activationCode.ToString(),
+                    Token = _ResultToken.Result.Token,
+                    ExpirationDate = _ResultToken.Result.Expiration.ToUniversalTime(),
+                    IsDeleted = 10,
+                    RegistrationDate = DateTime.Now.ToUniversalTime(),
+                };
+                var resultRP = await _userFactoryRepository.TBResetPasswordsAsync(TblResetP);
+                if (!resultRP.IsSuccess)
+                {
+                    _flashMessage.Danger("Incorrect information Order Tmp check", resultRP.ErrorMessage);
+                    return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "RecoverPasswordDialog", model) });
+                }
+
+                string link = Url.Action(
+                    "ResetPassword",
+                    "Account",
+                    new { token = _ResultToken.Result.Token }, protocol: HttpContext.Request.Scheme);
+               
+                _mailHelper.SendMail(
+                    $"{user.Result.FullName.ToString()}",
+                    $"{model.UserName.ToString()}",
+                    "ECommerce App - Recuperación de Contraseña"+
+                    $"<h1>ECommerce App - Recuperación de Contraseña</h1>" +
+                    $"Para recuperar la contraseña haga click en el siguiente enlace:" +
+                    $"<p><a href = \"{link}\">Reset Password</a></p>");
+                _flashMessage.Info("Las instrucciones para recuperar la contraseña han sido enviadas a su correo.");
+                return Json(new { isValid = true, html = ModalHelper.RenderRazorViewToString(this, "MyLoginPartial") });
+            }
+            return Json(new { isValid = false, html = ModalHelper.RenderRazorViewToString(this, "RecoverPasswordDialog", model) });
+        }
+
+        [HttpGet]
+        public IActionResult ChangingPassword()
+        {
+            return View();
+        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> ChangingPassword(ChangePasswordViewModel model) 
+        //{
+        //}
+
+        public IActionResult ResetPassword(string Vicissitude, string UserName, string Jwt, string token)
+        {
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(Jwt) || string.IsNullOrEmpty(UserName))
+            {
+                return new NotFoundViewResult("_ResourceNotFound");
+            }
+            
+            var model = new ResetPasswordViewModel { Token = token, Jwt = Jwt, UserName = UserName, UserId = Vicissitude };
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+
+            Guid resultId = new Guid(model.UserId);
+            var user = await _userFactoryRepository.GetToObtainUserAsync(resultId, model.UserName);
+            if (user != null)
+            {
+                var result = await _userFactoryRepository.ResetPasswordAsync(user.Result, model.Password, model.Jwt, model.Token, model.Password);
+                if (result.IsSuccess)
+                {
+                    ViewBag.Message = "Password reset successful.";
+                    _flashMessage.Confirmation("", "Password reset successful.");
+                    return RedirectToAction("MyLoginPartial", "Account");
+                }
+
+                ViewBag.Message = "Error while resetting the password.";
+                return View(model);
+            }
+
+            ViewBag.Message = "User not found.";
             return View(model);
         }
 

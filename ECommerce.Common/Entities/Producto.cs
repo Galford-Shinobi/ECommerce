@@ -1,4 +1,7 @@
-﻿namespace ECommerce.Common.Entities
+﻿using System;
+using System.Collections.Generic;
+
+namespace ECommerce.Common.Entities
 {
     public partial class Producto
     {

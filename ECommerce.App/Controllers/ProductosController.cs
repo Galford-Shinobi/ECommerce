@@ -5,6 +5,7 @@ using ECommerce.Common.Application.Implementacion;
 using ECommerce.Common.Application.Interfaces;
 using ECommerce.Common.Entities;
 using ECommerce.Common.Models.Dtos;
+using ECommerce.Common.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ using static ECommerce.App.Helpers.ModalHelper;
 
 namespace ECommerce.App.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = UserRolesResponsive.AdminSuperUser)]
     public class ProductosController : Controller
     {
         private readonly IProductoRepository _productoRepository;

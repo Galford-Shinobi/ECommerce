@@ -25,7 +25,7 @@ namespace ECommerce.Common.Application.Implementacion
             try
             {
                 var OnlyProvee = await _dbContext
-                    .Proveedors.FirstOrDefaultAsync(c => c.IDProveedor == avatar.Idproveedor);
+                    .Proveedors.FirstOrDefaultAsync(c => c.Idproveedor == avatar.Idproveedor);
                 OnlyProvee.IsActive = 0;
                 _dbContext.Proveedors.Update(OnlyProvee);
                 await SaveAllAsync();
@@ -42,7 +42,7 @@ namespace ECommerce.Common.Application.Implementacion
         {
             try
             {
-                var proveedor = await _dbContext.Proveedors.FirstOrDefaultAsync(c => c.IDProveedor == id);
+                var proveedor = await _dbContext.Proveedors.FirstOrDefaultAsync(c => c.Idproveedor == id);
                 if (proveedor == null)
                 {
                     return new GenericResponse<Proveedor> { IsSuccess = false, Message = "No hay Datos!" };
@@ -66,7 +66,7 @@ namespace ECommerce.Common.Application.Implementacion
 
         public async Task<List<ProveedorDto>> GetAllProveedorAsync()
         {
-            var listAll = await _dbContext.Proveedors.Include(t => t.TipoDocumento).Where(c => c.IsActive == 1).OrderBy(c => c.IDProveedor).ToListAsync();
+            var listAll = await _dbContext.Proveedors.Include(t => t.TipoDocumento).Where(c => c.IsActive == 1).OrderBy(c => c.Idproveedor).ToListAsync();
             var ListDto = new List<ProveedorDto>();
 
             foreach (var list in listAll)
@@ -80,7 +80,7 @@ namespace ECommerce.Common.Application.Implementacion
         {
             try
             {
-                var Only = await _dbContext.Proveedors.FirstOrDefaultAsync(c => c.IDProveedor.Equals(id));
+                var Only = await _dbContext.Proveedors.FirstOrDefaultAsync(c => c.Idproveedor.Equals(id));
                 if (Only == null)
                 {
                     return new GenericResponse<ProveedorDto> { IsSuccess = false, Message = "No hay Datos!" };
@@ -99,7 +99,7 @@ namespace ECommerce.Common.Application.Implementacion
         {
             try
             {
-                var Onlyproveedor = await _dbContext.Proveedors.FirstOrDefaultAsync(c => c.IDProveedor.Equals(id));
+                var Onlyproveedor = await _dbContext.Proveedors.FirstOrDefaultAsync(c => c.Idproveedor.Equals(id));
                 if (Onlyproveedor == null)
                 {
                     return new GenericResponse<Proveedor> { IsSuccess = false, Message = "No hay Datos!" };
@@ -118,7 +118,7 @@ namespace ECommerce.Common.Application.Implementacion
         {
             try
             {
-                var OnlyProv = await _dbContext.Proveedors.FirstOrDefaultAsync(p => p.IDProveedor == model.Idproveedor);
+                var OnlyProv = await _dbContext.Proveedors.FirstOrDefaultAsync(p => p.Idproveedor == model.Idproveedor);
 
                 if (OnlyProv==null)
                 {

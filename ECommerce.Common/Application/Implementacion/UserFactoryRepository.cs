@@ -13,6 +13,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Text;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ECommerce.Common.Application.Implementacion
 {
@@ -223,7 +224,7 @@ namespace ECommerce.Common.Application.Implementacion
                 _configuration["Tokens:Issuer"],
                 _configuration["Tokens:Audience"],
                 claims,
-                expires: DateTime.UtcNow.AddDays(2),
+                expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: credentials);
             return new TokenResponse
             {
@@ -377,6 +378,206 @@ namespace ECommerce.Common.Application.Implementacion
                     {
                         IsSuccess = false,
                         Message = ex.Message,
+                    };
+                }
+            }
+        }
+
+        public async Task<GenericResponse<TokenResponse>> GeneratePasswordResetTokenAsync(RecoverPasswordViewModel user)
+        {
+            try
+            {
+                var _NetUsers = await _dataContext
+                    .AspNetUsers
+                    .Where(u => u.UserName.ToUpper() == user.UserName.ToUpper() && u.IsActive == 1)
+                    .FirstOrDefaultAsync();
+
+
+                if (_NetUsers == null)
+                {
+                    return new GenericResponse<TokenResponse>
+                    {
+                        IsSuccess = false,
+                        Message = "requested information was not found",
+                    };
+                }
+
+                var tokenr = GetToken(user.UserName);
+                var avalon = await GetToObtainUserAsync(_NetUsers.UserId, _NetUsers.Email);
+                tokenr.ObtainUser = avalon.Result;
+                return new GenericResponse<TokenResponse>
+                {
+                    IsSuccess = true,
+                    Result = tokenr,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new GenericResponse<TokenResponse>
+                {
+                    IsSuccess = false,
+                    Message = ex.Message,
+                };
+            }
+        }
+
+        public async Task<GenericResponse<ObtainUserResponse>> GetToObtainUserAsync(Guid UserId, string UserName)
+        {
+            try
+            {
+                ObtainUserResponse ObtainUser = await (from ur in _dataContext.AspNetUserRoles
+                                                       join r in _dataContext.AspNetRoles
+                                                       on ur.RolId equals r.RolId
+                                                       join u in _dataContext.AspNetUsers
+                                                       on ur.UserId equals u.UserId
+                                                       where u.UserId.Equals(UserId) || u.Email.Equals(UserName)
+                                                       select new ObtainUserResponse
+                                                       {
+
+                                                           Age = u.Age,
+                                                           Dni = u.Dni,
+                                                           UserId = u.UserId,
+                                                           Email = u.Email,
+                                                           FirstName = u.FirstName,
+                                                           Surname = u.SurName,
+                                                           SecondsurName = u.SecondSurName,
+                                                           NickName = u.NickName,
+                                                           PicturefullPath = u.PictureFullPath,
+                                                           UserName = u.UserName,
+                                                           RolName = r.Rnombre,
+                                                           IsActive = u.IsActive == 1 ? true : false,
+                                                       }
+                          ).FirstOrDefaultAsync();
+                return new GenericResponse<ObtainUserResponse>
+                {
+                    IsSuccess = true,
+                    Result = ObtainUser,
+                };
+            }
+            catch (Exception ex)
+            {
+
+                return new GenericResponse<ObtainUserResponse>
+                {
+                    IsSuccess = false,
+                    Message = ex.InnerException.Message,
+                };
+            }
+        }
+
+        public async Task<GenericResponse<object>> ResetPasswordAsync(ObtainUserResponse model, string Password, string jwt, string token, string password)
+        {
+            using (Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction = _dataContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    //var _Tbl = await _dataContext
+                    //    .TblResetPassword
+                    //    .FirstOrDefaultAsync(x => x.Jwt.Equals(jwt) && x.Token.Equals(token) && x.UserName.Equals(model.UserName) && x.UserId.Equals(model.UserId) && x.IsDeleted.Equals(10));
+                    //if (_Tbl == null)
+                    //{
+                    //    return new Response<object>
+                    //    {
+                    //        IsSuccess = false,
+                    //        Message = "Do not Data!",
+                    //    };
+                    //}
+
+                    //var _AspNetUsers = await _dataContext.TblAspNetUsers
+                    //   .Where(u => u.NUser.ToUpper() == model.UserName.ToUpper() && u.Status == 1 && u.UserId.Equals(model.UserId))
+                    //   .FirstOrDefaultAsync();
+
+                    //if (_AspNetUsers == null)
+                    //{
+                    //    return new Response<object>
+                    //    {
+                    //        IsSuccess = false,
+                    //        Message = "the user data is not correct check the data ....!"
+                    //    };
+                    //}
+                    //byte[] passwordHash, passwordSalt;
+                    //CrearPasswordHash(Password, out passwordHash, out passwordSalt);
+                    //_AspNetUsers.PasswordHash = passwordHash;
+                    //_AspNetUsers.PasswordSalt = passwordSalt;
+
+                    //_dataContext.TblAspNetUsers.Update(_AspNetUsers);
+
+
+                    //_dataContext.TblResetPassword.Remove(_Tbl);
+                    //await _dataContext.SaveChangesAsync();
+                    //transaction.Commit();
+                    return new GenericResponse<object>
+                    {
+                        IsSuccess = true,
+                        Message = "Win!",
+                    };
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return new GenericResponse<object>
+                    {
+                        IsSuccess = false,
+                        Message = ex.Message,
+                    };
+                }
+            }
+        }
+        public async Task<GenericResponse<object>> TBResetPasswordsAsync(TblResetPassword model)
+        {
+            using (Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction = _dataContext.Database.BeginTransaction()) 
+            {
+                try
+                {
+                    _dataContext.TblResetPasswords.Add(model);
+
+                    var historyUpdate = new HistorialRefreshToken() {
+                        EsActivo = true,
+                        FechaCreacion = DateTime.Now.ToUniversalTime(),
+                        FechaExpiracion =  model.ExpirationDate,
+                        RefreshToken = model.Jwt,
+                        Token = model.Token,
+                        UserId = model.UserId,
+                    };
+
+                    _dataContext.HistorialRefreshTokens.Add(historyUpdate);
+                    await _dataContext.SaveChangesAsync();
+
+                   await transaction.CommitAsync();
+                    return new GenericResponse<object>
+                    {
+                        IsSuccess = true,
+                    };
+                }
+                catch (DbUpdateException dbUpdateException)
+                {
+                   await transaction.RollbackAsync();
+                    if (dbUpdateException.InnerException.Message.Contains("duplicate"))
+                    {
+
+                        return new GenericResponse<object>
+                        {
+                            IsSuccess = false,
+                            ErrorMessage = $"Error 1622: Palabras clave duplicadas encontradas bajo la misma entidad principal. Elimina todos los duplicados.({model.UserName})."
+                        };
+                    }
+                    else
+                    {
+
+                        return new GenericResponse<object>
+                        {
+                            IsSuccess = false,
+                            ErrorMessage = dbUpdateException.InnerException.Message
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+                   await transaction.RollbackAsync();
+                    return new GenericResponse<object>
+                    {
+                        IsSuccess = false,
+                        ErrorMessage = ex.InnerException.Message,
                     };
                 }
             }

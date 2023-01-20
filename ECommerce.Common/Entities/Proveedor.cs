@@ -5,7 +5,7 @@ namespace ECommerce.Common.Entities
 {
     public partial class Proveedor
     {
-        public int IDProveedor { get; set; }
+        public int Idproveedor { get; set; }
         public string Nombre { get; set; }
         public int TipoDocumentoId { get; set; }
         public string Documento { get; set; }

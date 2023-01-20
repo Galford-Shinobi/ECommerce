@@ -26,7 +26,9 @@ namespace ECommerce.Common.DataBase
         public virtual DbSet<Producto> Productos { get; set; }
         public virtual DbSet<Proveedor> Proveedors { get; set; }
         public virtual DbSet<RolMenu> RolMenus { get; set; }
+        public virtual DbSet<TblResetPassword> TblResetPasswords { get; set; }
         public virtual DbSet<TipoDocumento> TipoDocumentos { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -479,14 +481,14 @@ namespace ECommerce.Common.DataBase
 
             modelBuilder.Entity<Proveedor>(entity =>
             {
-                entity.HasKey(e => e.IDProveedor);
+                entity.HasKey(e => e.Idproveedor);
 
                 entity.ToTable("Proveedor");
 
                 entity.HasIndex(e => e.Correo, "UQ__Proveedo__60695A19210DF758")
                     .IsUnique();
 
-                entity.Property(e => e.IDProveedor).HasColumnName("IDProveedor");
+                entity.Property(e => e.Idproveedor).HasColumnName("IDProveedor");
 
                 entity.Property(e => e.ApellidosContacto)
                     .IsRequired()
@@ -562,6 +564,34 @@ namespace ECommerce.Common.DataBase
                     .WithMany(p => p.RolMenus)
                     .HasForeignKey(d => d.RolId)
                     .HasConstraintName("FK__RolMenu__RolId__72C60C4A");
+            });
+
+            modelBuilder.Entity<TblResetPassword>(entity =>
+            {
+                entity.HasKey(e => e.ResetPasswordId);
+
+                entity.ToTable("TblResetPassword");
+
+                entity.HasIndex(e => new { e.UserId, e.UserName }, "UC_ResetPassword")
+                    .IsUnique();
+
+                entity.Property(e => e.ResetPasswordId).ValueGeneratedNever();
+
+                entity.Property(e => e.ExpirationDate).HasColumnType("datetime");
+
+                entity.Property(e => e.IsDeleted).HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.Jwt).IsUnicode(false);
+
+                entity.Property(e => e.RegistrationDate)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Token).IsUnicode(false);
+
+                entity.Property(e => e.UserName)
+                    .HasMaxLength(75)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<TipoDocumento>(entity =>

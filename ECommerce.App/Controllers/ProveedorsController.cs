@@ -6,6 +6,7 @@ using ECommerce.Common.Application.Interfaces;
 using ECommerce.Common.Entities;
 using ECommerce.Common.Models;
 using ECommerce.Common.Models.Dtos;
+using ECommerce.Common.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
@@ -14,7 +15,7 @@ using static ECommerce.App.Helpers.ModalHelper;
 
 namespace ECommerce.App.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = UserRolesResponsive.AdminSuperUser)]
     public class ProveedorsController : Controller
     {
         private readonly IProveedorRepository _proveedorRepository;
@@ -60,7 +61,7 @@ namespace ECommerce.App.Controllers
                 model.Documento = Provee.Result.Documento;
                 model.TipoDocumentoId = Provee.Result.TipoDocumentoId;
                 model.Documento = Provee.Result.Documento;
-                model.Idproveedor = Provee.Result.IDProveedor;
+                model.Idproveedor = Provee.Result.Idproveedor;
                 model.Telefono1 = Provee.Result.Telefono1;
                 model.Telefono2 = Provee.Result.Telefono2;
                 model.ApellidosContacto = Provee.Result.ApellidosContacto;
@@ -158,7 +159,7 @@ namespace ECommerce.App.Controllers
                 return NotFound();
             }
 
-            var onlyMedidum = await _proveedorRepository.DeleteProveedorAsync(medidum.Result.IDProveedor);
+            var onlyMedidum = await _proveedorRepository.DeleteProveedorAsync(medidum.Result.Idproveedor);
 
             if (!onlyMedidum.IsSuccess)
             {

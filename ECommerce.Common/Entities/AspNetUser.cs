@@ -27,9 +27,7 @@ namespace ECommerce.Common.Entities
         public byte[] PasswordSalt { get; set; }
         public int GenderId { get; set; }
         public string UserTimeZone { get; set; }
-        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}")]
         public DateTime? LastLoginDate { get; set; }
-        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}")]
         public DateTime? LastAccessedDate { get; set; }
         public bool? AccountLocked { get; set; }
         public int? AccessFailedCount { get; set; }
@@ -37,8 +35,11 @@ namespace ECommerce.Common.Entities
         public byte[] ImagePath { get; set; }
         public int? FirstTime { get; set; }
         public int? IsActive { get; set; }
-        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd HH:mm:ss}")]
         public DateTime? RegistrationDate { get; set; }
+
+        public virtual Genero Gender { get; set; }
+        public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
+        public virtual ICollection<HistorialRefreshToken> HistorialRefreshTokens { get; set; }
 
         [Display(Name = "Logo")]
         public string PictureFullPath
@@ -55,9 +56,5 @@ namespace ECommerce.Common.Entities
                     PicturePath.Substring(1));
             }
         }
-
-        public virtual Genero Gender { get; set; }
-        public virtual ICollection<AspNetUserRole> AspNetUserRoles { get; set; }
-        public virtual ICollection<HistorialRefreshToken> HistorialRefreshTokens { get; set; }
     }
 }
